@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Admin Control Panel – Campus Events</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <a href="index.html" class="brand-logo">
+            <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="brand-name">Campus<span>Admin</span></div>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-compass"></i> Discover</a>
+            <a href="tickets.html" class="nav-btn"><i class="fa-solid fa-wallet"></i> My Tickets</a>
+            <a href="vendor.html" class="nav-btn"><i class="fa-solid fa-bullhorn"></i> Organizer Portal</a>
+            <a href="admin.html" class="nav-btn active"><i class="fa-solid fa-shield-halved"></i> Admin</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Hero Title -->
+        <div class="hero-section" style="padding: 24px;">
+            <h1 class="hero-title">Platform Verification & Revenue Model</h1>
+            <p class="hero-sub">Approve campus events, verify vendors, and update platform ticket commission rates.</p>
+        </div>
+
+        <!-- Admin Control Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+
+            <!-- Card 1: Configurable Ticket Commission Settings -->
+            <section class="modal-card" style="max-width: 100%;">
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px; color: var(--gold);"><i class="fa-solid fa-sliders"></i> Ticket Commission Settings</h3>
+                <p style="font-size: 12px; color: var(--text-medium); margin-bottom: 16px;">Configure the percentage fee deducted from each ticket purchase across all campuses.</p>
+
+                <form id="commissionForm">
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase; font-weight: 800;">Platform Ticket Commission (%)</label>
+                        <div style="display: flex; gap: 8px; margin-top: 4px;">
+                            <input type="number" id="commissionPctInput" value="10.0" step="0.1" min="0" max="50" class="form-control" style="flex-grow: 1; padding: 12px; background: var(--surface-elevated); color: var(--gold); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; font-family: var(--font-mono); font-size: 18px; font-weight: 900;" required>
+                            <button type="submit" class="btn-primary" style="background: var(--gold); color: #000;"><i class="fa-solid fa-save"></i> Update Rate</button>
+                        </div>
+                    </div>
+                </form>
+                <div id="commissionStatus" style="margin-top: 8px; font-family: var(--font-mono); font-size: 12px;"></div>
+            </section>
+
+            <!-- Card 2: Financial Telemetry Summary -->
+            <section class="modal-card" style="max-width: 100%;">
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; color: var(--secondary);"><i class="fa-solid fa-coins"></i> Platform Financial Telemetry</h3>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--surface-elevated); border-radius: 8px;">
+                        <span style="font-size: 12px; color: var(--text-medium);">Gross Ticket Volume (GHS):</span>
+                        <strong style="font-family: var(--font-mono); font-size: 16px; color: var(--gold);" id="telemetryGross">GHS 0.00</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--surface-elevated); border-radius: 8px;">
+                        <span style="font-size: 12px; color: var(--text-medium);">Net Vendor Payouts:</span>
+                        <strong style="font-family: var(--font-mono); font-size: 16px; color: #fff;" id="telemetryPayouts">GHS 0.00</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--surface-elevated); border-radius: 8px;">
+                        <span style="font-size: 12px; color: var(--text-medium);">Total Platform Commission Earned:</span>
+                        <strong style="font-family: var(--font-mono); font-size: 16px; color: var(--success);" id="telemetryCommission">GHS 0.00</strong>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Pending Events Verification Queue -->
+        <div style="margin-top: 32px;" class="modal-card">
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px;"><i class="fa-solid fa-clipboard-check"></i> Pending Events Approval Queue</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Poster</th>
+                            <th>Event Title</th>
+                            <th>University</th>
+                            <th>Venue</th>
+                            <th>Organizer Email</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Verification Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminEventsTableBody">
+                        <tr><td colspan="7" style="text-align: center; color: var(--text-medium); padding: 30px 0;">Loading pending events...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAdminData();
+    });
+
+    async function loadAdminData() {
+        try {
+            const res = await fetch('/.netlify/functions/campus-events-api?is_admin=true&status=ALL');
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('commissionPctInput').value = parseFloat(data.commissionPercent || 10.0).toFixed(1);
+                renderEventsTable(data.events, data.commissionPercent || 10.0);
+            }
+        } catch (e) {
+            console.error('Failed to load admin data:', e);
+        }
+    }
+
+    function renderEventsTable(events, commissionPct) {
+        const tbody = document.getElementById('adminEventsTableBody');
+        let grossTotal = 0;
+
+        if (!events || !events.length) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-medium); padding: 30px 0;">No events in queue.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = events.map(e => {
+            const tiers = e.ticket_types || [];
+            tiers.forEach(t => {
+                const sold = parseInt(t.sold_count || 0, 10);
+                const price = parseFloat(t.price_ghs || 0);
+                grossTotal += (sold * price);
+            });
+
+            const isPending = e.status === 'PENDING';
+            const actionBtns = isPending 
+                ? `<button class="btn-primary" style="padding: 6px 12px; font-size: 11px; background: var(--success); color: #000;" onclick="updateEventStatus(${e.id}, 'APPROVED')"><i class="fa-solid fa-check"></i> Approve</button>
+                   <button class="btn-primary" style="padding: 6px 12px; font-size: 11px; background: var(--error); color: #fff; margin-left: 6px;" onclick="updateEventStatus(${e.id}, 'REJECTED')"><i class="fa-solid fa-xmark"></i> Reject</button>`
+                : `<span style="font-size: 11px; font-weight: 800; color: ${e.status === 'APPROVED' ? 'var(--success)' : 'var(--error)'}">${e.status}</span>`;
+
+            return `
+                <tr>
+                    <td><img src="${e.poster_url}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px;"></td>
+                    <td><strong style="color: #fff;">${e.title}</strong><br><span style="font-size: 11px; color: var(--text-medium);">${e.category}</span></td>
+                    <td>${e.university}</td>
+                    <td>${e.venue}</td>
+                    <td><span style="font-size: 12px; color: var(--text-medium);">${e.vendor_email}</span></td>
+                    <td><span style="font-family: var(--font-mono); font-size: 11px; font-weight: 800; color: var(--gold);">${e.status}</span></td>
+                    <td style="text-align: right;">${actionBtns}</td>
+                </tr>
+            `;
+        }).join('');
+
+        // Update Financial Telemetry
+        const commissionEarned = parseFloat((grossTotal * (commissionPct / 100)).toFixed(2));
+        const netPayouts = grossTotal - commissionEarned;
+
+        document.getElementById('telemetryGross').textContent = 'GHS ' + grossTotal.toFixed(2);
+        document.getElementById('telemetryPayouts').textContent = 'GHS ' + netPayouts.toFixed(2);
+        document.getElementById('telemetryCommission').textContent = 'GHS ' + commissionEarned.toFixed(2);
+    }
+
+    async function updateEventStatus(eventId, status) {
+        try {
+            const res = await fetch('/.netlify/functions/campus-events-api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'ADMIN_APPROVE_EVENT', eventId, status })
+            });
+            const data = await res.json();
+            if (data.success) {
+                loadAdminData();
+            }
+        } catch (e) {
+            alert('Error: ' + e.message);
+        }
+    }
+
+    // Update Commission Percentage Form
+    document.getElementById('commissionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const pct = parseFloat(document.getElementById('commissionPctInput').value || 10.0);
+        const statusDiv = document.getElementById('commissionStatus');
+
+        statusDiv.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Updating commission rate in database...</span>';
+        try {
+            const res = await fetch('/.netlify/functions/campus-events-api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'ADMIN_UPDATE_COMMISSION', commissionPercent: pct })
+            });
+            const data = await res.json();
+            if (data.success) {
+                statusDiv.innerHTML = `<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> ${data.message}</span>`;
+                loadAdminData();
+            }
+        } catch (err) {
+            statusDiv.innerHTML = `<span style="color: var(--error);">Error: ${err.message}</span>`;
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My QR Tickets – Campus Events</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode JS Library for Rendering QR Code Images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <a href="index.html" class="brand-logo">
+            <div class="brand-icon"><i class="fa-solid fa-ticket"></i></div>
+            <div class="brand-name">Campus<span>Events</span></div>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-compass"></i> Discover</a>
+            <a href="tickets.html" class="nav-btn active"><i class="fa-solid fa-wallet"></i> My Tickets</a>
+            <a href="vendor.html" class="nav-btn"><i class="fa-solid fa-bullhorn"></i> Organizer Portal</a>
+            <a href="admin.html" class="nav-btn"><i class="fa-solid fa-shield-halved"></i> Admin</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <div class="hero-section" style="padding: 24px;">
+            <h1 class="hero-title">Where is my ticket?</h1>
+            <p class="hero-sub">Enter your email address to view your purchased QR tickets for door check-in.</p>
+            
+            <div style="display: flex; gap: 12px; max-width: 440px; margin-top: 16px;">
+                <input type="email" id="userEmailInput" placeholder="Enter student email..." class="form-control" style="flex-grow: 1; padding: 12px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; outline: none;">
+                <button onclick="loadUserTickets()" class="btn-primary" style="padding: 12px 20px;"><i class="fa-solid fa-magnifying-glass"></i> Load Tickets</button>
+            </div>
+            <div id="verifyStatusMsg" style="margin-top: 12px; font-family: var(--font-mono); font-size: 13px;"></div>
+        </div>
+
+        <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 20px;" id="walletHeading">Purchased QR Tickets</h2>
+
+        <!-- Ticket Cards Container -->
+        <div id="ticketsWalletContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-medium);">
+                Enter your email address above to retrieve your campus event tickets.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const reference = urlParams.get('reference') || urlParams.get('order_ref') || urlParams.get('trxref');
+        const statusMsg = document.getElementById('verifyStatusMsg');
+
+        if (reference) {
+            statusMsg.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Verifying Paystack payment reference...</span>';
+            try {
+                const res = await fetch(`/.netlify/functions/campus-checkout-verify?reference=${reference}`);
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    statusMsg.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Payment Confirmed! Your QR tickets have been issued below.</span>';
+                    document.getElementById('userEmailInput').value = data.order.buyer_email;
+                    renderTickets(data.tickets);
+                } else {
+                    throw new Error(data.error || 'Payment verification failed');
+                }
+            } catch (e) {
+                statusMsg.innerHTML = `<span style="color: var(--error);">Error: ${e.message}</span>`;
+            }
+        }
+    });
+
+    async function loadUserTickets() {
+        const email = document.getElementById('userEmailInput').value.trim();
+        const statusMsg = document.getElementById('verifyStatusMsg');
+        if (!email) return alert('Please enter your email address');
+
+        statusMsg.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Loading your tickets...</span>';
+        try {
+            const res = await fetch(`/.netlify/functions/campus-ticket-verify?email=${encodeURIComponent(email)}`);
+            const data = await res.json();
+            if (res.ok && data.success) {
+                statusMsg.innerHTML = '';
+                renderTickets(data.tickets);
+            }
+        } catch (e) {
+            statusMsg.innerHTML = `<span style="color: var(--error);">Error loading tickets: ${e.message}</span>`;
+        }
+    }
+
+    function renderTickets(tickets) {
+        const container = document.getElementById('ticketsWalletContainer');
+        if (!tickets || !tickets.length) {
+            container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-medium);">No active tickets found for this email address.</div>';
+            return;
+        }
+
+        container.innerHTML = tickets.map((t, idx) => {
+            const isUsed = t.status === 'USED';
+            const statusBadge = isUsed 
+                ? '<span class="pill-btn status-used"><i class="fa-solid fa-check-double"></i> CHECKED IN (USED)</span>' 
+                : '<span class="pill-btn status-valid"><i class="fa-solid fa-qrcode"></i> VALID ENTRY</span>';
+
+            const dateStr = new Date(t.start_time).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            return `
+                <div class="ticket-wallet-card">
+                    <div class="ticket-header">
+                        <span style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">${t.university} · ${t.tier_name}</span>
+                        <h3 style="font-size: 18px; font-weight: 900; margin: 4px 0;">${t.event_title}</h3>
+                        <span style="font-size: 12px; color: #666;"><i class="fa-solid fa-location-dot"></i> ${t.venue}</span><br>
+                        <span style="font-size: 12px; color: #666;"><i class="fa-regular fa-clock"></i> ${dateStr}</span>
+                    </div>
+
+                    <div style="margin: 12px 0;">
+                        ${statusBadge}
+                    </div>
+
+                    <div class="ticket-qr-frame" id="qrcode-${idx}"></div>
+
+                    <div>
+                        <span style="font-size: 10px; color: #888; text-transform: uppercase; display: block;">Check-in Code</span>
+                        <div class="ticket-code-badge">${t.ticket_code}</div>
+                    </div>
+
+                    <p style="font-size: 11px; color: #888; margin-top: 12px;">Present this QR code or 8-char code at the event door for scanning.</p>
+                </div>
+            `;
+        }).join('');
+
+        // Generate QR Code canvases
+        tickets.forEach((t, idx) => {
+            const qrContainer = document.getElementById(`qrcode-${idx}`);
+            if (qrContainer) {
+                qrContainer.innerHTML = '';
+                new QRCode(qrContainer, {
+                    text: t.qr_hash || t.ticket_code,
+                    width: 140,
+                    height: 140,
+                    colorDark : "#FFFFFF",
+                    colorLight : "#000000",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            }
+        });
+    }
+    </script>
+</body>
+</html>

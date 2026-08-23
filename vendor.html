@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor & Scanner Portal – Campus Events</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html5-qrcode Library for Camera Scanner -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <a href="index.html" class="brand-logo">
+            <div class="brand-icon"><i class="fa-solid fa-ticket"></i></div>
+            <div class="brand-name">Campus<span>Events</span></div>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-compass"></i> Discover</a>
+            <a href="tickets.html" class="nav-btn"><i class="fa-solid fa-wallet"></i> My Tickets</a>
+            <a href="vendor.html" class="nav-btn active"><i class="fa-solid fa-bullhorn"></i> Organizer Portal</a>
+            <a href="admin.html" class="nav-btn"><i class="fa-solid fa-shield-halved"></i> Admin</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- Hero Banner -->
+        <div class="hero-section" style="padding: 24px;">
+            <h1 class="hero-title">Organizer Control & Door Scanner</h1>
+            <p class="hero-sub">Publish campus events, monitor live ticket sales, and scan attendee QR codes at the door.</p>
+
+            <div style="display: flex; gap: 12px; margin-top: 16px;">
+                <input type="email" id="vendorEmailInput" placeholder="Organizer email..." class="form-control" value="echo_events@legon.edu.gh" style="max-width: 320px; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; outline: none;">
+                <button onclick="loadVendorData()" class="btn-primary"><i class="fa-solid fa-sync"></i> Load Sales Dashboard</button>
+            </div>
+        </div>
+
+        <!-- Vendor Portal Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+            
+            <!-- Card 1: Submit New Event -->
+            <section class="modal-card" style="max-width: 100%;">
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; color: var(--secondary);"><i class="fa-solid fa-plus-circle"></i> Create & Submit Event</h3>
+                <form id="createEventForm">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase;">Organization / Team Name</label>
+                        <input type="text" id="evtOrgName" class="form-control" value="Echo Campus Ghana" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px;" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase;">Event Title</label>
+                        <input type="text" id="evtTitle" class="form-control" placeholder="e.g. UG Legon Artiste Night 2026" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px;" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase;">University</label>
+                            <select id="evtUni" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px;">
+                                <option value="UG Legon">UG Legon</option>
+                                <option value="KNUST">KNUST</option>
+                                <option value="UCC">UCC</option>
+                                <option value="UPSA">UPSA</option>
+                                <option value="Ashesi">Ashesi</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase;">Category</label>
+                            <select id="evtCategory" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px;">
+                                <option value="CONCERT">Concert</option>
+                                <option value="PARTY">Party / Rave</option>
+                                <option value="SEMINAR">Seminar / Tech</option>
+                                <option value="SPORTS">Sports</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase;">Venue Location</label>
+                        <input type="text" id="evtVenue" class="form-control" placeholder="e.g. Legon Sports Stadium" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px;" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase;">Start Date & Time</label>
+                        <input type="datetime-local" id="evtStartTime" class="form-control" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px;" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase;">Poster Image URL</label>
+                        <input type="url" id="evtPosterUrl" class="form-control" placeholder="https://..." style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px;">
+                    </div>
+
+                    <!-- Ticket Tiers -->
+                    <div style="background: var(--surface-elevated); padding: 12px; border-radius: 10px; margin-bottom: 16px;">
+                        <label style="font-size: 11px; color: var(--secondary); text-transform: uppercase; font-weight: 800;">Ticket Pricing Tiers</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+                            <input type="text" id="tier1Name" value="Regular" style="padding: 8px; background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;">
+                            <input type="number" id="tier1Price" value="50" placeholder="Price (GHS)" style="padding: 8px; background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; padding: 12px;">Submit Event for Approval</button>
+                </form>
+                <div id="createEventStatus" style="margin-top: 12px; font-family: var(--font-mono); font-size: 12px;"></div>
+            </section>
+
+            <!-- Card 2: Mobile Door QR Code Scanner & Check-in -->
+            <section class="modal-card" style="max-width: 100%;">
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; color: var(--gold);"><i class="fa-solid fa-qrcode"></i> Door Attendee Scanner</h3>
+                <p style="font-size: 12px; color: var(--text-medium); margin-bottom: 16px;">Scan attendee QR code or type 8-character check-in code to verify entry.</p>
+
+                <!-- Code Input -->
+                <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                    <input type="text" id="manualCodeInput" placeholder="e.g. TKT-8X92-M3K1" class="form-control" style="flex-grow: 1; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; font-family: var(--font-mono); text-transform: uppercase;">
+                    <button onclick="verifyCodeManual()" class="btn-primary" style="background: var(--gold); color: #000;"><i class="fa-solid fa-check"></i> Check In</button>
+                </div>
+
+                <!-- Camera Stream Container -->
+                <div id="qrScannerView" style="width: 100%; min-height: 220px; background: #000; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px dashed rgba(255,255,255,0.2);">
+                    <button onclick="startCameraScanner()" class="btn-primary" style="background: rgba(255,255,255,0.1);"><i class="fa-solid fa-camera"></i> Activate Camera Scanner</button>
+                </div>
+
+                <!-- Scanner Result Box -->
+                <div id="scannerResultBox" style="margin-top: 16px; padding: 16px; border-radius: 12px; display: none; font-family: var(--font-mono); text-align: center;"></div>
+            </section>
+
+        </div>
+
+        <!-- Sales Telemetry Table -->
+        <div style="margin-top: 32px;" class="modal-card">
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px;"><i class="fa-solid fa-chart-line"></i> My Live Event Sales & Revenue Summary</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event Title</th>
+                            <th>Campus</th>
+                            <th>Status</th>
+                            <th>Tickets Sold</th>
+                            <th>Gross Sales (GHS)</th>
+                            <th>Service Fee Deducted</th>
+                            <th>Net Revenue (GHS)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vendorSalesTableBody">
+                        <tr><td colspan="7" style="text-align: center; color: var(--text-medium); padding: 30px 0;">Load organizer email above to view live sales telemetry.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    let html5QrCode = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set default datetime 5 days from now
+        const now = new Date(Date.now() + (5 * 86400000));
+        document.getElementById('evtStartTime').value = now.toISOString().slice(0, 16);
+        loadVendorData();
+    });
+
+    async function loadVendorData() {
+        const vendorEmail = document.getElementById('vendorEmailInput').value.trim();
+        if (!vendorEmail) return;
+
+        try {
+            const res = await fetch(`/.netlify/functions/campus-events-api?vendor_email=${encodeURIComponent(vendorEmail)}&status=ALL`);
+            const data = await res.json();
+            if (data.success) {
+                renderSalesTable(data.events, data.commissionPercent || 10.0);
+            }
+        } catch (e) {
+            console.error('Failed to load vendor data:', e);
+        }
+    }
+
+    function renderSalesTable(events, commissionPct) {
+        const tbody = document.getElementById('vendorSalesTableBody');
+        if (!events || !events.length) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-medium); padding: 30px 0;">No events published under this organizer email.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = events.map(e => {
+            const tiers = e.ticket_types || [];
+            let totalSold = 0;
+            let totalGross = 0;
+
+            tiers.forEach(t => {
+                const sold = parseInt(t.sold_count || 0, 10);
+                const price = parseFloat(t.price_ghs || 0);
+                totalSold += sold;
+                totalGross += (sold * price);
+            });
+
+            const feeDeducted = parseFloat((totalGross * (commissionPct / 100)).toFixed(2));
+            const netRevenue = totalGross - feeDeducted;
+
+            const statusBadge = e.status === 'APPROVED' 
+                ? '<span style="color: var(--success); font-weight: 800;">APPROVED</span>' 
+                : (e.status === 'REJECTED' ? '<span style="color: var(--error); font-weight: 800;">REJECTED</span>' : '<span style="color: var(--gold); font-weight: 800;">PENDING REVIEW</span>');
+
+            return `
+                <tr>
+                    <td><strong style="color: #fff;">${e.title}</strong></td>
+                    <td>${e.university}</td>
+                    <td>${statusBadge}</td>
+                    <td style="font-family: var(--font-mono); font-weight: 800;">${totalSold} Tickets</td>
+                    <td style="font-family: var(--font-mono); color: var(--gold); font-weight: 900;">GHS ${totalGross.toFixed(2)}</td>
+                    <td style="font-family: var(--font-mono); color: var(--text-medium);">GHS ${feeDeducted.toFixed(2)}</td>
+                    <td style="font-family: var(--font-mono); color: var(--success); font-weight: 900;">GHS ${netRevenue.toFixed(2)}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // Submit Event Form
+    document.getElementById('createEventForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const vendorEmail = document.getElementById('vendorEmailInput').value.trim();
+        const orgName = document.getElementById('evtOrgName').value.trim();
+        const title = document.getElementById('evtTitle').value.trim();
+        const uni = document.getElementById('evtUni').value;
+        const category = document.getElementById('evtCategory').value;
+        const venue = document.getElementById('evtVenue').value.trim();
+        const startTime = document.getElementById('evtStartTime').value;
+        const posterUrl = document.getElementById('evtPosterUrl').value.trim();
+
+        const t1Name = document.getElementById('tier1Name').value.trim();
+        const t1Price = parseFloat(document.getElementById('tier1Price').value || 0);
+
+        const statusDiv = document.getElementById('createEventStatus');
+        statusDiv.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Submitting event to admin queue...</span>';
+
+        try {
+            const res = await fetch('/.netlify/functions/campus-events-api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'SUBMIT_EVENT',
+                    vendorEmail,
+                    organizationName: orgName,
+                    title,
+                    venue,
+                    university: uni,
+                    category,
+                    startTime,
+                    posterUrl,
+                    ticketTiers: [{ name: t1Name, price: t1Price, capacity: 300 }]
+                })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                statusDiv.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Event submitted! Awaiting Admin verification.</span>';
+                document.getElementById('evtTitle').value = '';
+                loadVendorData();
+            } else {
+                throw new Error(data.error || 'Submission failed');
+            }
+        } catch (err) {
+            statusDiv.innerHTML = `<span style="color: var(--error);">Error: ${err.message}</span>`;
+        }
+    });
+
+    // Manual Door Code Check-in
+    async function verifyCodeManual() {
+        const code = document.getElementById('manualCodeInput').value.trim();
+        if (!code) return alert('Enter a ticket code');
+        processCheckIn({ ticketCode: code });
+    }
+
+    async function processCheckIn(payload) {
+        const resBox = document.getElementById('scannerResultBox');
+        resBox.style.display = 'block';
+        resBox.style.background = 'var(--surface-elevated)';
+        resBox.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Verifying ticket code in database...</span>';
+
+        try {
+            const res = await fetch('/.netlify/functions/campus-ticket-verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (res.status === 200 && data.status === 'CHECKED_IN') {
+                resBox.style.background = 'rgba(0, 230, 118, 0.15)';
+                resBox.style.border = '1px solid #00E676';
+                resBox.innerHTML = `
+                    <div style="color: #00E676; font-size: 20px; font-weight: 900;"><i class="fa-solid fa-circle-check"></i> ADMIT ATTENDEE!</div>
+                    <div style="margin-top: 8px; color: #fff; font-size: 14px;"><strong>${data.ticket.event_title}</strong> (${data.ticket.tier_name})</div>
+                    <div style="font-size: 12px; color: var(--text-medium); margin-top: 4px;">Ticket Code: ${data.ticket.ticket_code} · ${data.ticket.attendee_email}</div>
+                `;
+            } else if (res.status === 409) {
+                resBox.style.background = 'rgba(255, 179, 0, 0.15)';
+                resBox.style.border = '1px solid #FFB300';
+                resBox.innerHTML = `
+                    <div style="color: #FFB300; font-size: 18px; font-weight: 900;"><i class="fa-solid fa-triangle-exclamation"></i> ${data.error}</div>
+                `;
+            } else {
+                resBox.style.background = 'rgba(207, 102, 121, 0.15)';
+                resBox.style.border = '1px solid #CF6679';
+                resBox.innerHTML = `
+                    <div style="color: #CF6679; font-size: 18px; font-weight: 900;"><i class="fa-solid fa-circle-xmark"></i> INVALID TICKET!</div>
+                    <div style="font-size: 12px; color: #fff; margin-top: 4px;">${data.error || 'Ticket not found in database.'}</div>
+                `;
+            }
+        } catch (e) {
+            resBox.style.background = 'rgba(207, 102, 121, 0.15)';
+            resBox.innerHTML = `<span style="color: var(--error);">Error: ${e.message}</span>`;
+        }
+    }
+
+    function startCameraScanner() {
+        const view = document.getElementById('qrScannerView');
+        view.innerHTML = '<div id="reader" style="width: 100%;"></div>';
+        
+        html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 200, height: 200 } },
+            (decodedText, decodedResult) => {
+                console.log('QR Code scanned:', decodedText);
+                html5QrCode.stop();
+                processCheckIn({ qrHash: decodedText, ticketCode: decodedText });
+            },
+            (errorMessage) => {
+                // Ignore scanning failures per frame
+            }
+        ).catch(err => {
+            view.innerHTML = `<div style="padding: 20px; color: var(--error);">Camera Access Error: ${err}</div>`;
+        });
+    }
+    </script>
+</body>
+</html>

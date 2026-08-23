@@ -1,0 +1,418 @@
+/* --- MATERIALISTIC & MINIMALISTIC CAMPUS MARKETPLACE DESIGN --- */
+:root {
+    --primary: #6200EE;
+    --primary-variant: #3700B3;
+    --secondary: #03DAC6;
+    --bg-dark: #121212;
+    --surface-dark: #1E1E1E;
+    --surface-elevated: #2C2C2C;
+    --text-high: #FFFFFF;
+    --text-medium: #A0A0A0;
+    --text-disabled: #666666;
+    --error: #CF6679;
+    --success: #00E676;
+    --gold: #FFB300;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --radius-card: 16px;
+    --radius-pill: 9999px;
+    --radius-btn: 12px;
+    --shadow-elevation: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-dark);
+    color: var(--text-high);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+/* Material Header */
+.app-header {
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+}
+
+.brand-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-high);
+    letter-spacing: -0.5px;
+}
+
+.brand-name span {
+    color: var(--secondary);
+}
+
+.nav-links {
+    display: flex;
+    gap: 12px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-high);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover, .nav-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(98, 0, 238, 0.4);
+}
+
+/* Layout Container */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+/* Hero Discovery Header */
+.hero-section {
+    background: linear-gradient(180deg, rgba(98, 0, 238, 0.15) 0%, rgba(18, 18, 18, 0) 100%);
+    border-radius: 20px;
+    padding: 32px 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(98, 0, 238, 0.2);
+}
+
+.hero-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text-high);
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+}
+
+.hero-sub {
+    font-size: 14px;
+    color: var(--text-medium);
+    margin-bottom: 20px;
+}
+
+/* Filter Pills Row */
+.filter-pills-row {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.pill-btn {
+    background: var(--surface-elevated);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-medium);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.pill-btn.active, .pill-btn:hover {
+    background: var(--secondary);
+    color: #000;
+    border-color: var(--secondary);
+    box-shadow: 0 0 12px rgba(3, 218, 198, 0.4);
+}
+
+/* Event Grid */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* Material Event Card */
+.event-card {
+    background: var(--surface-dark);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-elevation);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+}
+
+.card-poster-wrap {
+    position: relative;
+    width: 100%;
+    height: 170px;
+    background: #000;
+    overflow: hidden;
+}
+
+.card-poster-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    color: var(--secondary);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+}
+
+.card-verified-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.card-uni {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.card-event-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-high);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-medium);
+    margin-bottom: 16px;
+}
+
+.card-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-price {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--gold);
+    font-family: var(--font-mono);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-primary:hover {
+    background: var(--primary-variant);
+    box-shadow: 0 4px 16px rgba(98, 0, 238, 0.5);
+}
+
+/* Modal Transparent Pricing Breakdown */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.modal-card {
+    background: var(--surface-dark);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: var(--shadow-elevation);
+}
+
+.price-breakdown-box {
+    background: var(--surface-elevated);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.price-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-medium);
+}
+
+.price-line.total {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--gold);
+    font-family: var(--font-mono);
+}
+
+/* QR Ticket Wallet Card */
+.ticket-wallet-card {
+    background: #ffffff;
+    color: #121212;
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 360px;
+    margin: 0 auto 24px auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    text-align: center;
+}
+
+.ticket-header {
+    border-bottom: 2px dashed #e0e0e0;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+
+.ticket-qr-frame {
+    background: #000;
+    padding: 16px;
+    border-radius: 16px;
+    display: inline-block;
+    margin: 16px 0;
+}
+
+.ticket-code-badge {
+    background: var(--primary);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-weight: 900;
+    font-size: 18px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    display: inline-block;
+}
+
+.status-valid { background: #00E676; color: #000; }
+.status-used { background: #E0E0E0; color: #666; }
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+th, td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 13px;
+    text-align: left;
+}
+
+th {
+    background: rgba(255, 255, 255, 0.04);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-medium);
+}
