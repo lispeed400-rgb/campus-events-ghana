@@ -2,3 +2,10 @@ node_modules/
 .env
 *.log
 create_github_repo.js
+deploy_to_netlify.js
+deploy_netlify_direct.js
+check_netlify_site.js
+deploy_by_id.js
+fast_zip_deploy.js
+deploy_cli_prod.js
+patch_site_public.js
