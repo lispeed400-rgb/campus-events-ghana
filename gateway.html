@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Pay Gateway – Secure Hosted Checkout</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6200EE;
+            --primary-light: #7F39FB;
+            --primary-dark: #3700B3;
+            --secondary: #03DAC6;
+            --accent: #FF0266;
+            --bg-dark: #0A0A10;
+            --surface: #13131F;
+            --surface-elevated: #1C1C2E;
+            --surface-card: #232338;
+            --text-high: #F8F9FA;
+            --text-medium: #A0A0B8;
+            --text-low: #65657E;
+            --border-glow: rgba(98, 0, 238, 0.35);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --success: #00E676;
+            --warning: #FFD600;
+            --error: #FF5252;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-high);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(98, 0, 238, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(3, 218, 198, 0.08) 0%, transparent 40%);
+        }
+
+        .gateway-card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(98, 0, 238, 0.15);
+            position: relative;
+        }
+
+        .gateway-header {
+            background: linear-gradient(135deg, #1C1C2E, #13131F);
+            padding: 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-badge-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 18px;
+        }
+
+        .brand-badge-text {
+            font-weight: 900;
+            font-size: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-badge-text span {
+            color: var(--secondary);
+        }
+
+        .ssl-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 10px;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+            border-radius: 100px;
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            font-family: var(--font-mono);
+        }
+
+        .gateway-body {
+            padding: 32px 28px;
+        }
+
+        .merchant-banner {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+        }
+
+        .merchant-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-medium);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .merchant-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .payment-title {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-top: 2px;
+        }
+
+        .amount-display {
+            text-align: center;
+            padding: 24px 0 20px;
+        }
+
+        .amount-currency {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .amount-value {
+            font-size: 44px;
+            font-weight: 900;
+            font-family: var(--font-mono);
+            letter-spacing: -1px;
+            color: #fff;
+        }
+
+        .order-meta-table {
+            width: 100%;
+            margin: 20px 0;
+            border-top: 1px dashed var(--border-subtle);
+            border-bottom: 1px dashed var(--border-subtle);
+            padding: 14px 0;
+        }
+
+        .order-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            padding: 6px 0;
+        }
+
+        .order-meta-label {
+            color: var(--text-medium);
+        }
+
+        .order-meta-val {
+            font-weight: 700;
+            color: var(--text-high);
+            font-family: var(--font-mono);
+            font-size: 12px;
+        }
+
+        .momo-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .momo-pill {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 12px;
+            background: var(--surface-elevated);
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-medium);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-pay-now {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #000;
+            font-weight: 900;
+            font-size: 16px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(98, 0, 238, 0.35);
+        }
+
+        .btn-pay-now:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(3, 218, 198, 0.45);
+        }
+
+        .btn-cancel {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: var(--text-low);
+            font-weight: 600;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            color: var(--text-medium);
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-low);
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Success & Status states */
+        .state-container {
+            display: none;
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .success-icon-wrap {
+            width: 72px;
+            height: 72px;
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 20px;
+            border: 2px solid rgba(0, 230, 118, 0.3);
+            animation: pulseSuccess 2s infinite;
+        }
+
+        @keyframes pulseSuccess {
+            0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
+            70% { box-shadow: 0 0 0 18px rgba(0, 230, 118, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .success-sub {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .redirect-countdown-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gateway-card">
+        
+        <!-- Header -->
+        <div class="gateway-header">
+            <div class="brand-pill">
+                <div class="brand-badge-icon"><i class="fa-solid fa-bolt"></i></div>
+                <div class="brand-badge-text">Campus<span>Pay</span></div>
+            </div>
+            <div class="ssl-pill">
+                <i class="fa-solid fa-lock"></i> 256-BIT SECURE
+            </div>
+        </div>
+
+        <!-- Initial Checkout State -->
+        <div class="gateway-body" id="checkoutState">
+            
+            <div class="merchant-banner">
+                <div class="merchant-label">Paying To</div>
+                <div class="merchant-name" id="merchantName">Loading...</div>
+                <div class="payment-title" id="paymentTitle">Payment Checkout</div>
+            </div>
+
+            <div class="amount-display">
+                <div class="amount-currency">Amount Due (GHS)</div>
+                <div class="amount-value" id="amountDisplay">GHS --.--</div>
+            </div>
+
+            <div class="order-meta-table">
+                <div class="order-meta-row">
+                    <span class="order-meta-label">Order Reference</span>
+                    <span class="order-meta-val" id="orderRefDisplay">--</span>
+                </div>
+                <div class="order-meta-row">
+                    <span class="order-meta-label">Customer</span>
+                    <span class="order-meta-val" id="customerEmailDisplay">--</span>
+                </div>
+                <div class="order-meta-row">
+                    <span class="order-meta-label">Payment Engine</span>
+                    <span class="order-meta-val" style="color: var(--secondary);"><i class="fa-solid fa-shield-halved"></i> Paystack Direct</span>
+                </div>
+            </div>
+
+            <div class="momo-badges">
+                <div class="momo-pill"><i class="fa-solid fa-mobile-screen"></i> MTN MoMo</div>
+                <div class="momo-pill"><i class="fa-solid fa-signal"></i> Telecel Cash</div>
+                <div class="momo-pill"><i class="fa-solid fa-sim-card"></i> AT Money</div>
+                <div class="momo-pill"><i class="fa-solid fa-credit-card"></i> Visa / Card</div>
+            </div>
+
+            <button class="btn-pay-now" id="proceedBtn" onclick="proceedToPaystack()">
+                <i class="fa-solid fa-lock"></i> Pay Securely via Paystack
+            </button>
+
+            <button class="btn-cancel" id="cancelBtn" onclick="cancelPayment()">
+                Cancel and return to store
+            </button>
+
+            <div class="footer-note">
+                <i class="fa-solid fa-shield-check"></i> Powered by Campus Events Ghana &amp; Paystack
+            </div>
+
+        </div>
+
+        <!-- Success Return State -->
+        <div class="gateway-body state-container" id="successState">
+            <div class="success-icon-wrap">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 class="success-title">Payment Successful!</h2>
+            <p class="success-sub" id="successMerchantMsg">Your payment has been verified. Returning you to the merchant store...</p>
+
+            <div class="redirect-countdown-badge">
+                <i class="fa-solid fa-spinner fa-spin"></i> Redirecting in <span id="countdownSecs">3</span>s
+            </div>
+
+            <div style="margin-top: 10px;">
+                <button class="btn-pay-now" id="manualReturnBtn" style="font-size: 14px; padding: 12px 20px;">
+                    <i class="fa-solid fa-arrow-right"></i> Return to Store Immediately
+                </button>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div class="gateway-body state-container" id="errorState">
+            <div class="success-icon-wrap" style="background: rgba(255, 82, 82, 0.15); color: var(--error); border-color: rgba(255, 82, 82, 0.3);">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h2 class="success-title" style="color: var(--error);">Payment Unconfirmed</h2>
+            <p class="success-sub" id="errorMsg">The payment session could not be verified or was cancelled.</p>
+            
+            <button class="btn-pay-now" onclick="location.reload()" style="background: var(--surface-card); color: #fff; border: 1px solid var(--border-subtle);">
+                <i class="fa-solid fa-rotate-right"></i> Retry Verification
+            </button>
+            <button class="btn-cancel" onclick="cancelPayment()">
+                Return to merchant website
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let sessionData = null;
+        let paystackUrl = null;
+        let returnUrl = null;
+        let cancelUrl = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionRef = urlParams.get('session') || urlParams.get('reference') || urlParams.get('trxref') || urlParams.get('gateway_ref');
+
+            if (!sessionRef) {
+                showError('Invalid gateway URL. Missing transaction session reference.');
+                return;
+            }
+
+            try {
+                // Verify / Fetch session from API
+                const res = await fetch(`/.netlify/functions/gateway-verify?reference=${encodeURIComponent(sessionRef)}`);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to load gateway session.');
+                }
+
+                sessionData = data;
+                returnUrl = data.redirect_url || data.callback_url;
+                cancelUrl = data.cancel_url || data.callback_url;
+                paystackUrl = data.paystack_url;
+
+                // If already verified SUCCESS, show success and redirect
+                if (data.status === 'SUCCESS' || data.verified === true) {
+                    showSuccess(data);
+                    return;
+                }
+
+                // If PENDING, render checkout details
+                const tx = data.transaction || {};
+                document.getElementById('merchantName').textContent = tx.merchant_name || 'Partner Merchant';
+                document.getElementById('paymentTitle').textContent = tx.title || 'Online Payment';
+                document.getElementById('amountDisplay').textContent = 'GHS ' + parseFloat(tx.amount_ghs || 0).toFixed(2);
+                document.getElementById('orderRefDisplay').textContent = tx.merchant_ref || tx.gateway_ref || sessionRef;
+                document.getElementById('customerEmailDisplay').textContent = tx.customer_email || 'Customer';
+
+            } catch (err) {
+                showError(err.message);
+            }
+        });
+
+        function proceedToPaystack() {
+            if (paystackUrl) {
+                window.location.href = paystackUrl;
+            } else {
+                // Auto reload to re-fetch
+                location.reload();
+            }
+        }
+
+        function cancelPayment() {
+            if (cancelUrl) {
+                const joinChar = cancelUrl.includes('?') ? '&' : '?';
+                window.location.href = `${cancelUrl}${joinChar}status=cancelled`;
+            } else if (returnUrl) {
+                const joinChar = returnUrl.includes('?') ? '&' : '?';
+                window.location.href = `${returnUrl}${joinChar}status=cancelled`;
+            } else {
+                window.history.back();
+            }
+        }
+
+        function showSuccess(data) {
+            document.getElementById('checkoutState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('successState').style.display = 'block';
+
+            const tx = data.transaction || {};
+            document.getElementById('successMerchantMsg').textContent = `Payment of GHS ${parseFloat(tx.amount_ghs || 0).toFixed(2)} to ${tx.merchant_name || 'Merchant'} confirmed!`;
+
+            const targetUrl = data.redirect_url || data.callback_url;
+            document.getElementById('manualReturnBtn').onclick = () => {
+                window.location.href = targetUrl;
+            };
+
+            let count = 3;
+            const timer = setInterval(() => {
+                count--;
+                const badge = document.getElementById('countdownSecs');
+                if (badge) badge.textContent = count;
+                if (count <= 0) {
+                    clearInterval(timer);
+                    window.location.href = targetUrl;
+                }
+            }, 1000);
+        }
+
+        function showError(msg) {
+            document.getElementById('checkoutState').style.display = 'none';
+            document.getElementById('successState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('errorMsg').textContent = msg;
+        }
+    </script>
+</body>
+</html>

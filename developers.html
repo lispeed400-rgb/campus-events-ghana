@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Pay Gateway API – Developer Documentation & Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dev-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .dev-hero {
+            background: linear-gradient(135deg, rgba(98, 0, 238, 0.2), rgba(3, 218, 198, 0.15));
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 48px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dev-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(3, 218, 198, 0.15);
+            color: var(--secondary);
+            border: 1px solid rgba(3, 218, 198, 0.3);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .code-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .code-tab-btn {
+            padding: 8px 16px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-medium);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .code-tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .code-block-wrap {
+            position: relative;
+            background: #0B0B14;
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+
+        .code-block-wrap pre {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #E2E8F0;
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 6px 12px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-medium);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            color: #fff;
+            border-color: var(--secondary);
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .step-card {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+            padding: 28px;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .simulator-card {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 32px;
+            margin-top: 40px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .dev-hero { padding: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Navigation Header -->
+    <header class="app-header">
+        <a href="index.html" class="brand-logo">
+            <div class="brand-icon"><i class="fa-solid fa-ticket"></i></div>
+            <div class="brand-name">Campus<span>Events Ghana</span></div>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-compass"></i> Discover</a>
+            <a href="tickets.html" class="nav-btn"><i class="fa-solid fa-wallet"></i> My Tickets</a>
+            <a href="vendor.html" class="nav-btn"><i class="fa-solid fa-bullhorn"></i> Organizer Portal</a>
+            <a href="developers.html" class="nav-btn active"><i class="fa-solid fa-code"></i> Developer API</a>
+            <div id="navAuthContainer" style="display: flex; align-items: center; gap: 8px; margin-left: 6px;"></div>
+        </nav>
+    </header>
+
+    <div class="dev-container">
+
+        <!-- Hero -->
+        <div class="dev-hero">
+            <div class="dev-badge"><i class="fa-solid fa-bolt"></i> Universal Payment Gateway as a Service</div>
+            <h1 style="font-size: 36px; font-weight: 900; margin-bottom: 12px;">Accept Mobile Money on Any Website</h1>
+            <p style="font-size: 16px; color: var(--text-medium); max-width: 680px; line-height: 1.6;">
+                Integrate Ghana Mobile Money (MTN MoMo, Telecel Cash, AT Money) and Cards into your campus startup, e-commerce store, or ticketing portal. We handle Paystack processing and redirect customers back to your website with instant payment confirmation.
+            </p>
+        </div>
+
+        <!-- 3-Step Integration Flow -->
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 20px;">⚡ How It Works</h2>
+        <div class="step-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Initialize Session</h3>
+                <p style="font-size: 14px; color: var(--text-medium); line-height: 1.5;">
+                    Your website makes a <code>POST</code> request to <code>/.netlify/functions/gateway-init</code> with the amount, customer email, and your <code>callback_url</code>.
+                </p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Customer Pays</h3>
+                <p style="font-size: 14px; color: var(--text-medium); line-height: 1.5;">
+                    Redirect your customer to the returned <code>checkout_url</code>. Our hosted gateway loads Paystack for instant MoMo prompt or Card entry.
+                </p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Instant Return</h3>
+                <p style="font-size: 14px; color: var(--text-medium); line-height: 1.5;">
+                    After successful payment, the customer is returned to your <code>callback_url?status=success&amp;transaction_id=GW-...</code> so your website can fulfill the order.
+                </p>
+            </div>
+        </div>
+
+        <!-- Code Snippets -->
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 16px;">💻 Code Examples</h2>
+        <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchTab('js')">JavaScript / Fetch</button>
+            <button class="code-tab-btn" onclick="switchTab('nodejs')">Node.js</button>
+            <button class="code-tab-btn" onclick="switchTab('python')">Python</button>
+            <button class="code-tab-btn" onclick="switchTab('php')">PHP</button>
+            <button class="code-tab-btn" onclick="switchTab('curl')">cURL</button>
+        </div>
+
+        <!-- JavaScript Tab -->
+        <div id="tab-js" class="code-block-wrap">
+            <button class="copy-btn" onclick="copyCode('code-js')"><i class="fa-regular fa-copy"></i> Copy</button>
+            <pre id="code-js">// 1. Initialize Gateway Payment
+async function payWithCampusGateway() {
+    const res = await fetch('https://campuseventghana.site/.netlify/functions/gateway-init', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            amount: 50.00, // GHS
+            email: 'customer@gmail.com',
+            customer_name: 'Kofi Mensah',
+            merchant_name: 'Campus Tech Store',
+            merchant_ref: 'ORDER-1029',
+            title: 'Wireless Earbuds Purchase',
+            callback_url: 'https://mystore.com/checkout/success',
+            cancel_url: 'https://mystore.com/cart'
+        })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+        // Redirect customer to hosted checkout
+        window.location.href = data.checkout_url;
+    } else {
+        alert('Payment initiation failed: ' + data.error);
+    }
+}</pre>
+        </div>
+
+        <!-- Node.js Tab -->
+        <div id="tab-nodejs" class="code-block-wrap" style="display: none;">
+            <button class="copy-btn" onclick="copyCode('code-nodejs')"><i class="fa-regular fa-copy"></i> Copy</button>
+            <pre id="code-nodejs">const axios = require('axios');
+
+async function createCheckoutSession(req, res) {
+    try {
+        const response = await axios.post('https://campuseventghana.site/.netlify/functions/gateway-init', {
+            amount: 75.00,
+            email: req.body.email,
+            customer_name: req.body.name,
+            merchant_name: 'Legon Hall Week Committee',
+            merchant_ref: 'TICKET-9921',
+            title: 'Hall Week Mega Bash Ticket',
+            callback_url: 'https://legonhall.com/tickets/verify',
+            metadata: { student_id: '10982341' }
+        });
+
+        res.json({ checkout_url: response.data.checkout_url });
+    } catch (err) {
+        res.status(500).json({ error: err.response?.data?.error || err.message });
+    }
+}</pre>
+        </div>
+
+        <!-- Python Tab -->
+        <div id="tab-python" class="code-block-wrap" style="display: none;">
+            <button class="copy-btn" onclick="copyCode('code-python')"><i class="fa-regular fa-copy"></i> Copy</button>
+            <pre id="code-python">import requests
+
+payload = {
+    "amount": 120.00,
+    "email": "student@st.ug.edu.gh",
+    "customer_name": "Esi Mensah",
+    "merchant_name": "Ashesi Coding Club",
+    "merchant_ref": "REG-2026-44",
+    "title": "Hackathon 2026 Registration Fee",
+    "callback_url": "https://hackathon.ashesi.edu.gh/confirmation"
+}
+
+response = requests.post(
+    "https://campuseventghana.site/.netlify/functions/gateway-init",
+    json=payload
+)
+
+data = response.json()
+if data.get("success"):
+    print("Redirect user to:", data["checkout_url"])
+else:
+    print("Error:", data.get("error"))</pre>
+        </div>
+
+        <!-- PHP Tab -->
+        <div id="tab-php" class="code-block-wrap" style="display: none;">
+            <button class="copy-btn" onclick="copyCode('code-php')"><i class="fa-regular fa-copy"></i> Copy</button>
+            <pre id="code-php">&lt;?php
+$payload = [
+    'amount'        => 50.00,
+    'email'         => 'student@ucc.edu.gh',
+    'customer_name' => 'Kwesi Arthur',
+    'merchant_name' => 'UCC Bookshop',
+    'merchant_ref'  => 'INV-8831',
+    'title'         => 'Textbook Payment',
+    'callback_url'  => 'https://uccbooks.com/order-complete'
+];
+
+$ch = curl_init('https://campuseventghana.site/.netlify/functions/gateway-init');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+$response = curl_exec($ch);
+$data = json_decode($response, true);
+curl_close($ch);
+
+if (!empty($data['success'])) {
+    header('Location: ' . $data['checkout_url']);
+    exit;
+} else {
+    echo "Gateway Error: " . $data['error'];
+}
+?&gt;</pre>
+        </div>
+
+        <!-- cURL Tab -->
+        <div id="tab-curl" class="code-block-wrap" style="display: none;">
+            <button class="copy-btn" onclick="copyCode('code-curl')"><i class="fa-regular fa-copy"></i> Copy</button>
+            <pre id="code-curl">curl -X POST https://campuseventghana.site/.netlify/functions/gateway-init \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 50.00,
+    "email": "customer@example.com",
+    "customer_name": "Kofi Mensah",
+    "merchant_name": "My Cool Store",
+    "merchant_ref": "ORDER-991",
+    "title": "Premium Subscription",
+    "callback_url": "https://mysite.com/checkout/return"
+  }'</pre>
+        </div>
+
+        <!-- Interactive Gateway Simulator -->
+        <div class="simulator-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h2 style="font-size: 22px; font-weight: 800;">🚀 Live Gateway Simulator</h2>
+                    <p style="font-size: 14px; color: var(--text-medium);">Test creating a real payment session and testing the gateway redirect in real-time.</p>
+                </div>
+                <span class="ssl-pill" style="font-size: 12px;"><i class="fa-solid fa-circle-check"></i> Live Production API Ready</span>
+            </div>
+
+            <form id="simulatorForm" onsubmit="runSimulator(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Amount (GHS)</label>
+                        <input type="number" step="0.5" id="simAmount" class="form-control" value="50.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Email</label>
+                        <input type="email" id="simEmail" class="form-control" value="developer_test@st.ug.edu.gh" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="simCustomerName" class="form-control" value="Kofi Mensah">
+                    </div>
+                    <div class="form-group">
+                        <label>Merchant / Store Name</label>
+                        <input type="text" id="simMerchant" class="form-control" value="Campus Bookstore GH">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Item / Title</label>
+                        <input type="text" id="simTitle" class="form-control" value="Semester Handouts Pack">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Callback URL (Return after payment)</label>
+                        <input type="url" id="simCallback" class="form-control" value="https://campuseventghana.site/tickets.html" required>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <button type="submit" class="btn-primary" id="simSubmitBtn" style="padding: 14px 28px; font-size: 15px;">
+                        <i class="fa-solid fa-play"></i> Initialize Gateway Session
+                    </button>
+                    <div id="simStatusMsg" style="font-family: var(--font-mono); font-size: 13px;"></div>
+                </div>
+            </form>
+
+            <div id="simResultBox" style="display: none; margin-top: 24px; background: #0B0B14; border: 1px solid var(--border-subtle); border-radius: 14px; padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span style="font-size: 13px; font-weight: 700; color: var(--secondary);"><i class="fa-solid fa-circle-check"></i> Gateway Session Initialized</span>
+                    <a id="simLaunchLink" href="#" target="_blank" class="btn-secondary" style="font-size: 12px; padding: 6px 14px; text-decoration: none;">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Hosted Checkout Portal
+                    </a>
+                </div>
+                <pre id="simJsonOutput" style="font-family: var(--font-mono); font-size: 12px; color: #E2E8F0; max-height: 240px; overflow-y: auto;"></pre>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Auth & Advert Modals & Script -->
+    <script src="auth-advert.js"></script>
+    <script>
+        function switchTab(lang) {
+            document.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            ['js', 'nodejs', 'python', 'php', 'curl'].forEach(t => {
+                const el = document.getElementById('tab-' + t);
+                if (el) el.style.display = (t === lang) ? 'block' : 'none';
+            });
+        }
+
+        function copyCode(elemId) {
+            const text = document.getElementById(elemId).innerText;
+            navigator.clipboard.writeText(text);
+            showToast('Code copied to clipboard!', 'success');
+        }
+
+        async function runSimulator(e) {
+            e.preventDefault();
+            const btn = document.getElementById('simSubmitBtn');
+            const statusMsg = document.getElementById('simStatusMsg');
+            const resultBox = document.getElementById('simResultBox');
+            const jsonOutput = document.getElementById('simJsonOutput');
+            const launchLink = document.getElementById('simLaunchLink');
+
+            btn.disabled = true;
+            statusMsg.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Initializing gateway session...</span>';
+            resultBox.style.display = 'none';
+
+            try {
+                const res = await fetch('/.netlify/functions/gateway-init', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: parseFloat(document.getElementById('simAmount').value),
+                        email: document.getElementById('simEmail').value.trim(),
+                        customer_name: document.getElementById('simCustomerName').value.trim(),
+                        merchant_name: document.getElementById('simMerchant').value.trim(),
+                        title: document.getElementById('simTitle').value.trim(),
+                        merchant_ref: 'SIM-' + Math.random().toString(36).substring(2, 7).toUpperCase(),
+                        callback_url: document.getElementById('simCallback').value.trim()
+                    })
+                });
+
+                const data = await res.json();
+                btn.disabled = false;
+
+                if (res.ok && data.success) {
+                    statusMsg.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Session created!</span>';
+                    jsonOutput.textContent = JSON.stringify(data, null, 2);
+                    launchLink.href = data.checkout_url;
+                    resultBox.style.display = 'block';
+                } else {
+                    throw new Error(data.error || 'Simulator initialization failed.');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                statusMsg.innerHTML = `<span style="color: var(--error);"><i class="fa-solid fa-triangle-exclamation"></i> ${err.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
