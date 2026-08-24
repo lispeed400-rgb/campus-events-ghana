@@ -10,18 +10,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-page: #F7F9FA;
+            --bg-page: #F8FAFC;
             --card-bg: #FFFFFF;
-            --text-primary: #0A0D12;
-            --text-secondary: #475467;
-            --text-tertiary: #98A2B3;
-            --border-subtle: #EAECF0;
-            --border-strong: #D0D5DD;
-            --accent-black: #0A0D12;
-            --accent-green: #079455;
-            --accent-green-bg: #ECFDF3;
-            --accent-red: #D92D20;
-            --accent-red-bg: #FEF3F2;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-tertiary: #94A3B8;
+            --border-subtle: #E2E8F0;
+            --border-strong: #CBD5E1;
+            --accent-black: #0F172A;
+            --accent-green: #059669;
+            --accent-green-bg: #ECFDF5;
+            --accent-red: #DC2626;
+            --accent-red-bg: #FEF2F2;
             --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
@@ -38,32 +38,33 @@
             color: var(--text-primary);
             font-family: var(--font-sans);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px 16px;
+            padding: clamp(12px, 4vw, 24px);
         }
 
         .checkout-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 430px;
             background: var(--card-bg);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px -2px rgba(16, 24, 40, 0.06), 0 1px 3px 0 rgba(16, 24, 40, 0.04);
+            border-radius: clamp(14px, 3vw, 20px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
             overflow: hidden;
-            animation: fadeIn 0.25s ease-out;
+            animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* Top Header Bar */
         .checkout-header {
-            padding: 18px 24px;
+            padding: clamp(14px, 3vw, 18px) clamp(16px, 4vw, 24px);
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
@@ -83,7 +84,7 @@
         }
 
         .header-title {
-            font-size: 13.5px;
+            font-size: clamp(13px, 2.5vw, 14px);
             font-weight: 700;
             letter-spacing: -0.2px;
             color: var(--text-primary);
@@ -98,24 +99,24 @@
             align-items: center;
             gap: 4px;
             font-family: var(--font-mono);
-            background: #F2F4F7;
+            background: #F1F5F9;
             padding: 3px 8px;
             border-radius: 6px;
         }
 
         .checkout-body {
-            padding: 32px 24px 28px;
+            padding: clamp(24px, 5vw, 32px) clamp(16px, 4vw, 24px);
             text-align: center;
         }
 
         /* Minimalist Modern Spinner */
         .minimal-spinner {
-            width: 44px;
-            height: 44px;
-            border: 3px solid #F2F4F7;
+            width: 42px;
+            height: 42px;
+            border: 3px solid #E2E8F0;
             border-top-color: var(--accent-black);
             border-radius: 50%;
-            margin: 0 auto 20px;
+            margin: 0 auto 18px;
             animation: rotate 0.75s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
 
@@ -124,7 +125,7 @@
         }
 
         .page-headline {
-            font-size: 18px;
+            font-size: clamp(17px, 3.5vw, 19px);
             font-weight: 800;
             letter-spacing: -0.4px;
             color: var(--text-primary);
@@ -132,27 +133,27 @@
         }
 
         .page-subtext {
-            font-size: 13px;
+            font-size: clamp(12.5px, 2.5vw, 13.5px);
             color: var(--text-secondary);
-            line-height: 1.45;
-            margin-bottom: 24px;
+            line-height: 1.5;
+            margin-bottom: 22px;
         }
 
         /* Clean Receipt / Order Box */
         .order-summary-card {
-            background: #FAFAFA;
+            background: #F8FAFC;
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
-            padding: 16px 18px;
+            padding: clamp(14px, 3vw, 18px);
             text-align: left;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12.5px;
+            font-size: clamp(12px, 2.2vw, 13px);
             color: var(--text-secondary);
             margin-bottom: 8px;
         }
@@ -171,6 +172,8 @@
         .summary-val {
             font-weight: 600;
             color: var(--text-primary);
+            text-align: right;
+            word-break: break-all;
         }
 
         .summary-total-label {
@@ -181,7 +184,7 @@
 
         .summary-total-val {
             font-weight: 800;
-            font-size: 17px;
+            font-size: clamp(16px, 3.5vw, 18px);
             color: var(--text-primary);
             font-family: var(--font-mono);
         }
@@ -189,11 +192,11 @@
         /* Minimalist Modern Button */
         .btn-minimal {
             width: 100%;
-            padding: 13px 18px;
+            padding: clamp(12px, 2.5vw, 14px) 18px;
             background: var(--accent-black);
             color: #FFFFFF;
             font-weight: 700;
-            font-size: 13.5px;
+            font-size: clamp(13px, 2.4vw, 14px);
             border: none;
             border-radius: 10px;
             cursor: pointer;
@@ -203,11 +206,12 @@
             gap: 8px;
             text-decoration: none;
             transition: all 0.15s ease;
-            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+            touch-action: manipulation;
         }
 
-        .btn-minimal:hover {
-            background: #1F242F;
+        .btn-minimal:hover, .btn-minimal:active {
+            background: #1E293B;
             transform: translateY(-1px);
         }
 
@@ -215,40 +219,47 @@
             background: #FFFFFF;
             color: var(--text-primary);
             border: 1px solid var(--border-strong);
-            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
         }
 
-        .btn-minimal-secondary:hover {
-            background: #F9FAFB;
+        .btn-minimal-secondary:hover, .btn-minimal-secondary:active {
+            background: #F1F5F9;
         }
 
         /* Success & Error State Elements */
         .status-avatar-success {
-            width: 56px;
-            height: 56px;
+            width: clamp(48px, 10vw, 56px);
+            height: clamp(48px, 10vw, 56px);
             background: var(--accent-green-bg);
             color: var(--accent-green);
-            border: 1px solid #A6F4C5;
+            border: 1px solid #A7F3D0;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin: 0 auto 18px;
+            font-size: clamp(22px, 4vw, 26px);
+            margin: 0 auto 16px;
+            animation: pulseSuccess 2s infinite;
+        }
+
+        @keyframes pulseSuccess {
+            0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.35); }
+            70% { box-shadow: 0 0 0 12px rgba(5, 150, 105, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
         }
 
         .status-avatar-error {
-            width: 56px;
-            height: 56px;
+            width: clamp(48px, 10vw, 56px);
+            height: clamp(48px, 10vw, 56px);
             background: var(--accent-red-bg);
             color: var(--accent-red);
-            border: 1px solid #FECDCA;
+            border: 1px solid #FECACA;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin: 0 auto 18px;
+            font-size: clamp(22px, 4vw, 26px);
+            margin: 0 auto 16px;
         }
 
         .countdown-indicator {
@@ -256,26 +267,26 @@
             align-items: center;
             gap: 6px;
             padding: 5px 12px;
-            background: #F2F4F7;
+            background: #F1F5F9;
             border: 1px solid var(--border-subtle);
             border-radius: 100px;
             font-size: 11.5px;
             font-weight: 600;
             color: var(--text-secondary);
             font-family: var(--font-mono);
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         /* Minimalist Footer */
         .checkout-footer {
-            padding: 14px 24px;
+            padding: clamp(12px, 2.5vw, 14px) clamp(16px, 4vw, 24px);
             border-top: 1px solid var(--border-subtle);
-            background: #FAFAFA;
+            background: #F8FAFC;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            font-size: 11.5px;
+            font-size: 11px;
             color: var(--text-tertiary);
             font-weight: 500;
         }
@@ -326,7 +337,7 @@
             <div class="status-avatar-success">
                 <i class="fa-solid fa-check"></i>
             </div>
-            <h1 class="page-headline" style="color: var(--text-primary);">Payment Successful</h1>
+            <h1 class="page-headline" style="color: var(--accent-green);">Payment Successful</h1>
             <p class="page-subtext">Your transaction has been verified and confirmed.</p>
 
             <div class="order-summary-card">
@@ -345,32 +356,43 @@
             </div>
 
             <div class="countdown-indicator">
-                <i class="fa-solid fa-circle-notch fa-spin"></i> Returning in <span id="countdownSecs">2</span>s
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Returning to store in <span id="countdownSecs">2</span>s
             </div>
 
-            <a href="#" class="btn-minimal" id="returnStoreBtn">
+            <a href="#" class="btn-minimal" id="returnStoreBtn" style="background: var(--accent-green);">
                 Return to Store <i class="fa-solid fa-arrow-right" style="font-size: 11px;"></i>
             </a>
         </div>
 
-        <!-- 3. ERROR / CANCELLED VIEW -->
+        <!-- 3. CANCELLED / ABANDONED VIEW -->
         <div class="checkout-body" id="errorView" style="display: none;">
             <div class="status-avatar-error">
-                <i class="fa-solid fa-xmark"></i>
+                <i class="fa-solid fa-arrow-rotate-left"></i>
             </div>
-            <h1 class="page-headline">Payment Unconfirmed</h1>
-            <p class="page-subtext" id="errorDesc">The payment could not be confirmed or was cancelled.</p>
+            <h1 class="page-headline" id="errorTitle">Payment Incomplete</h1>
+            <p class="page-subtext" id="errorDesc">The checkout session was not completed or was cancelled. You can retry payment now or return to the store.</p>
 
-            <div class="countdown-indicator" style="color: var(--accent-red);" id="errorCountdownChip">
-                <i class="fa-solid fa-circle-notch fa-spin"></i> Returning in <span id="errorCountdownSecs">3</span>s
+            <div class="order-summary-card" id="errorSummaryCard" style="display: none;">
+                <div class="summary-row">
+                    <span class="summary-label">Merchant</span>
+                    <span class="summary-val" id="errorMerchant">Precision Axis AI</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-total-label">Amount Due</span>
+                    <span class="summary-total-val" id="errorAmount">GHS --.--</span>
+                </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button class="btn-minimal btn-minimal-secondary" onclick="location.reload()">
-                    <i class="fa-solid fa-rotate-right"></i> Retry Verification
-                </button>
-                <a href="#" class="btn-minimal" id="errorReturnBtn">
-                    Return to Store
+            <div class="countdown-indicator" style="color: var(--text-secondary);" id="errorCountdownChip">
+                <i class="fa-solid fa-clock"></i> Auto-returning in <span id="errorCountdownSecs">5</span>s
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="#" class="btn-minimal" id="retryPaymentBtn" style="display: none;">
+                    <i class="fa-solid fa-credit-card" style="font-size: 12px;"></i> Resume / Retry Payment
+                </a>
+                <a href="#" class="btn-minimal btn-minimal-secondary" id="errorReturnBtn">
+                    <i class="fa-solid fa-arrow-left" style="font-size: 11px;"></i> Return to Store
                 </a>
             </div>
         </div>
@@ -388,7 +410,7 @@
             const isReturningFromPaystack = urlParams.has('reference') || urlParams.has('trxref');
 
             if (!sessionRef) {
-                showError('Invalid payment session reference.', null);
+                showCancellation('Invalid payment session reference.', null, null, null);
                 return;
             }
 
@@ -411,9 +433,9 @@
                     return;
                 }
 
-                // --- CASE 2: User returning from Paystack but payment is still PENDING / FAILED ---
+                // --- CASE 2: User returning from Paystack but payment was ABANDONED / CANCELLED / FAILED ---
                 if (isReturningFromPaystack && (data.status !== 'SUCCESS')) {
-                    showError('Your payment was not completed or was cancelled.', cancelUrl);
+                    showCancellation('Your payment was not completed or was cancelled. You can resume checkout or return to the store.', cancelUrl, data.paystack_url, tx);
                     return;
                 }
 
@@ -427,16 +449,16 @@
                     manualBtn.href = data.paystack_url;
                     manualBtn.style.display = 'inline-flex';
 
-                    // Seamless automatic forward to Paystack after 500ms
+                    // Seamless automatic forward to Paystack after 400ms
                     setTimeout(() => {
                         window.location.href = data.paystack_url;
-                    }, 500);
+                    }, 400);
                 } else {
                     throw new Error('Payment gateway failed to initialize session.');
                 }
 
             } catch (err) {
-                showError(err.message, null);
+                showCancellation(err.message, null, null, null);
             }
         });
 
@@ -469,20 +491,34 @@
             }, 1000);
         }
 
-        function showError(msg, cancelUrl) {
+        function showCancellation(msg, cancelUrl, retryPaystackUrl, tx) {
             document.getElementById('topHeaderTitle').textContent = 'Checkout Status';
             document.getElementById('connectingView').style.display = 'none';
             document.getElementById('successView').style.display = 'none';
             document.getElementById('errorView').style.display = 'block';
-            document.getElementById('errorDesc').textContent = msg || 'Payment could not be confirmed.';
+            document.getElementById('errorDesc').textContent = msg || 'Payment was cancelled or abandoned.';
+
+            if (tx && tx.amount_ghs) {
+                document.getElementById('errorSummaryCard').style.display = 'block';
+                document.getElementById('errorMerchant').textContent = tx.merchant_name || 'Precision Axis AI';
+                document.getElementById('errorAmount').textContent = 'GHS ' + parseFloat(tx.amount_ghs || 0).toFixed(2);
+            }
+
+            // If retry Paystack checkout URL is available, provide 1-click Resume
+            const retryBtn = document.getElementById('retryPaymentBtn');
+            if (retryPaystackUrl) {
+                retryBtn.href = retryPaystackUrl;
+                retryBtn.style.display = 'inline-flex';
+            }
 
             const errorReturnBtn = document.getElementById('errorReturnBtn');
             if (cancelUrl) {
                 const joinChar = cancelUrl.includes('?') ? '&' : '?';
-                const finalCancelUrl = `${cancelUrl}${joinChar}status=failed&error=${encodeURIComponent(msg)}`;
+                const finalCancelUrl = `${cancelUrl}${joinChar}status=cancelled&error=${encodeURIComponent(msg)}`;
                 errorReturnBtn.href = finalCancelUrl;
 
-                let countdown = 3;
+                // 5-second auto return countdown
+                let countdown = 5;
                 const badge = document.getElementById('errorCountdownSecs');
                 const timer = setInterval(() => {
                     countdown--;
