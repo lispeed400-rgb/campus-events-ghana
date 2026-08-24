@@ -2,29 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Pay – Secure Payment Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Proceeding to Checkout</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4F46E5;
-            --primary-dark: #3730A3;
-            --secondary: #06B6D4;
-            --success: #10B981;
-            --success-bg: #ECFDF5;
-            --error: #EF4444;
-            --error-bg: #FEF2F2;
-            --bg-page: #F8FAFC;
+            --bg-page: #F7F9FA;
             --card-bg: #FFFFFF;
-            --text-dark: #0F172A;
-            --text-muted: #64748B;
-            --text-light: #94A3B8;
-            --border-color: #E2E8F0;
-            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --text-primary: #0A0D12;
+            --text-secondary: #475467;
+            --text-tertiary: #98A2B3;
+            --border-subtle: #EAECF0;
+            --border-strong: #D0D5DD;
+            --accent-black: #0A0D12;
+            --accent-green: #079455;
+            --accent-green-bg: #ECFDF3;
+            --accent-red: #D92D20;
+            --accent-red-bg: #FEF3F2;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
 
@@ -32,350 +30,354 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
             background-color: var(--bg-page);
-            color: var(--text-dark);
+            color: var(--text-primary);
             font-family: var(--font-sans);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            background-image: 
-                radial-gradient(circle at 10% 10%, rgba(79, 70, 229, 0.04) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(6, 182, 212, 0.04) 0%, transparent 40%);
+            padding: 20px 16px;
         }
 
-        .gateway-card {
+        .checkout-container {
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px -2px rgba(16, 24, 40, 0.06), 0 1px 3px 0 rgba(16, 24, 40, 0.04);
             overflow: hidden;
-            box-shadow: var(--shadow-card);
-            position: relative;
-            animation: cardAppear 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeIn 0.25s ease-out;
         }
 
-        @keyframes cardAppear {
-            from { opacity: 0; transform: translateY(12px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .gateway-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-color);
+        /* Top Header Bar */
+        .checkout-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: #FFFFFF;
         }
 
-        .brand-box {
+        .header-title-box {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .brand-icon {
-            width: 34px;
-            height: 34px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            font-size: 16px;
+        .lock-icon {
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
-        .brand-title {
-            font-size: 16px;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-            color: var(--text-dark);
-        }
-
-        .brand-title span {
-            color: var(--primary);
-        }
-
-        .secure-badge {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 11px;
+        .header-title {
+            font-size: 13.5px;
             font-weight: 700;
-            padding: 4px 10px;
-            background: var(--success-bg);
-            color: #047857;
-            border-radius: 100px;
-            border: 1px solid #A7F3D0;
-            font-family: var(--font-mono);
+            letter-spacing: -0.2px;
+            color: var(--text-primary);
+            text-transform: capitalize;
         }
 
-        .gateway-body {
-            padding: 32px 24px;
+        .secure-tag {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--font-mono);
+            background: #F2F4F7;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .checkout-body {
+            padding: 32px 24px 28px;
             text-align: center;
         }
 
-        /* --- Connecting & Initializing View --- */
-        .spinner-large {
-            width: 56px;
-            height: 56px;
-            border: 4px solid #E2E8F0;
-            border-top-color: var(--primary);
+        /* Minimalist Modern Spinner */
+        .minimal-spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid #F2F4F7;
+            border-top-color: var(--accent-black);
             border-radius: 50%;
             margin: 0 auto 20px;
-            animation: spin 0.8s linear infinite;
+            animation: rotate 0.75s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
 
-        @keyframes spin {
+        @keyframes rotate {
             to { transform: rotate(360deg); }
         }
 
-        .view-title {
-            font-size: 20px;
+        .page-headline {
+            font-size: 18px;
             font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.4px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
         }
 
-        .view-desc {
-            font-size: 13.5px;
-            color: var(--text-muted);
-            line-height: 1.5;
+        .page-subtext {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.45;
             margin-bottom: 24px;
         }
 
-        .merchant-box {
-            background: #F8FAFC;
-            border: 1px solid var(--border-color);
+        /* Clean Receipt / Order Box */
+        .order-summary-card {
+            background: #FAFAFA;
+            border: 1px solid var(--border-subtle);
             border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 24px;
+            padding: 16px 18px;
             text-align: left;
+            margin-bottom: 24px;
         }
 
-        .merchant-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .merchant-name {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .amount-row {
+        .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
             padding-top: 10px;
-            border-top: 1px dashed var(--border-color);
+            margin-top: 10px;
+            border-top: 1px solid var(--border-subtle);
         }
 
-        .amount-tag {
-            font-size: 12px;
-            color: var(--text-muted);
+        .summary-label {
+            font-weight: 500;
         }
 
-        .amount-bold {
-            font-size: 18px;
-            font-weight: 900;
-            color: var(--primary);
+        .summary-val {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .summary-total-label {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .summary-total-val {
+            font-weight: 800;
+            font-size: 17px;
+            color: var(--text-primary);
             font-family: var(--font-mono);
         }
 
-        .btn-action {
+        /* Minimalist Modern Button */
+        .btn-minimal {
             width: 100%;
-            padding: 14px;
-            background: var(--primary);
+            padding: 13px 18px;
+            background: var(--accent-black);
             color: #FFFFFF;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13.5px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.15s ease;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
             text-decoration: none;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
         }
 
-        .btn-action:hover {
-            background: var(--primary-dark);
+        .btn-minimal:hover {
+            background: #1F242F;
             transform: translateY(-1px);
         }
 
-        /* --- Success View --- */
-        .success-circle {
-            width: 64px;
-            height: 64px;
-            background: var(--success-bg);
-            color: var(--success);
-            border: 2px solid #A7F3D0;
+        .btn-minimal-secondary {
+            background: #FFFFFF;
+            color: var(--text-primary);
+            border: 1px solid var(--border-strong);
+            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+        }
+
+        .btn-minimal-secondary:hover {
+            background: #F9FAFB;
+        }
+
+        /* Success & Error State Elements */
+        .status-avatar-success {
+            width: 56px;
+            height: 56px;
+            background: var(--accent-green-bg);
+            color: var(--accent-green);
+            border: 1px solid #A6F4C5;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
-            margin: 0 auto 16px;
-            animation: pulseGreen 1.8s infinite;
+            font-size: 24px;
+            margin: 0 auto 18px;
         }
 
-        @keyframes pulseGreen {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            70% { box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        .status-avatar-error {
+            width: 56px;
+            height: 56px;
+            background: var(--accent-red-bg);
+            color: var(--accent-red);
+            border: 1px solid #FECDCA;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 18px;
         }
 
-        .countdown-chip {
+        .countdown-indicator {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 14px;
-            background: #F1F5F9;
-            border: 1px solid var(--border-color);
+            padding: 5px 12px;
+            background: #F2F4F7;
+            border: 1px solid var(--border-subtle);
             border-radius: 100px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-dark);
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
             font-family: var(--font-mono);
             margin-bottom: 20px;
         }
 
-        /* --- Error View --- */
-        .error-circle {
-            width: 64px;
-            height: 64px;
-            background: var(--error-bg);
-            color: var(--error);
-            border: 2px solid #FECACA;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            margin: 0 auto 16px;
-        }
-
-        .footer-brand {
-            border-top: 1px solid var(--border-color);
+        /* Minimalist Footer */
+        .checkout-footer {
             padding: 14px 24px;
-            background: #F8FAFC;
+            border-top: 1px solid var(--border-subtle);
+            background: #FAFAFA;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 600;
+            font-size: 11.5px;
+            color: var(--text-tertiary);
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <div class="gateway-card">
-        <!-- Header -->
-        <div class="gateway-header">
-            <div class="brand-box">
-                <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
-                <div class="brand-title">Campus<span>Pay</span></div>
+    <div class="checkout-container">
+        <!-- Top Bar -->
+        <div class="checkout-header">
+            <div class="header-title-box">
+                <i class="fa-solid fa-lock lock-icon"></i>
+                <span class="header-title" id="topHeaderTitle">Proceeding to checkout</span>
             </div>
-            <div class="secure-badge">
-                <i class="fa-solid fa-lock"></i> 256-BIT SECURE
+            <div class="secure-tag">
+                <i class="fa-solid fa-shield"></i> Encrypted
             </div>
         </div>
 
-        <!-- 1. CONNECTING / INITIALIZING VIEW (Redirects to Paystack) -->
-        <div class="gateway-body" id="connectingView">
-            <div class="spinner-large"></div>
-            <h2 class="view-title">Connecting to Paystack...</h2>
-            <p class="view-desc">Preparing your secure Mobile Money &amp; Card checkout.</p>
+        <!-- 1. FORWARDING VIEW (Connecting to Paystack) -->
+        <div class="checkout-body" id="connectingView">
+            <div class="minimal-spinner"></div>
+            <h1 class="page-headline">Proceeding to Checkout</h1>
+            <p class="page-subtext">Redirecting to secure payment engine...</p>
 
-            <div class="merchant-box" id="initMerchantBox" style="display: none;">
-                <div class="merchant-label">Paying To</div>
-                <div class="merchant-name" id="initMerchantName">Precision Axis AI</div>
-                <div class="amount-row">
-                    <span class="amount-tag">Amount Due:</span>
-                    <span class="amount-bold" id="initAmount">GHS --.--</span>
+            <div class="order-summary-card" id="summaryCard">
+                <div class="summary-row">
+                    <span class="summary-label">Merchant</span>
+                    <span class="summary-val" id="summaryMerchant">Precision Axis AI</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Item</span>
+                    <span class="summary-val" id="summaryItem">AI Prediction Access</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-total-label">Total Amount</span>
+                    <span class="summary-total-val" id="summaryAmount">GHS --.--</span>
                 </div>
             </div>
 
-            <a href="#" class="btn-action" id="manualPayBtn" style="display: none;">
-                <i class="fa-solid fa-arrow-right"></i> Continue to Payment
+            <a href="#" class="btn-minimal" id="manualForwardBtn" style="display: none;">
+                Continue to Payment <i class="fa-solid fa-arrow-right" style="font-size: 11px;"></i>
             </a>
         </div>
 
         <!-- 2. SUCCESS VIEW (Returning from Paystack) -->
-        <div class="gateway-body" id="successView" style="display: none;">
-            <div class="success-circle">
+        <div class="checkout-body" id="successView" style="display: none;">
+            <div class="status-avatar-success">
                 <i class="fa-solid fa-check"></i>
             </div>
-            <h2 class="view-title" style="color: #047857;">Payment Successful!</h2>
-            <p class="view-desc" id="successDesc">Your transaction has been verified and confirmed.</p>
+            <h1 class="page-headline" style="color: var(--text-primary);">Payment Successful</h1>
+            <p class="page-subtext">Your transaction has been verified and confirmed.</p>
 
-            <div class="merchant-box">
-                <div class="merchant-label">Payment Receipt</div>
-                <div class="merchant-name" id="successMerchant">Precision Axis AI</div>
-                <div class="amount-row">
-                    <span class="amount-tag">Total Paid:</span>
-                    <span class="amount-bold" style="color: #047857;" id="successAmount">GHS --.--</span>
+            <div class="order-summary-card">
+                <div class="summary-row">
+                    <span class="summary-label">Merchant</span>
+                    <span class="summary-val" id="successMerchant">Precision Axis AI</span>
                 </div>
-                <div style="margin-top: 8px; font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
-                    Ref: <span id="successRef">--</span>
+                <div class="summary-row">
+                    <span class="summary-label">Reference</span>
+                    <span class="summary-val" style="font-family: var(--font-mono); font-size: 11.5px;" id="successRef">--</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-total-label">Amount Paid</span>
+                    <span class="summary-total-val" style="color: var(--accent-green);" id="successAmount">GHS --.--</span>
                 </div>
             </div>
 
-            <div class="countdown-chip">
-                <i class="fa-solid fa-spinner fa-spin"></i> Returning to store in <span id="countdownSecs">2</span>s
+            <div class="countdown-indicator">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Returning in <span id="countdownSecs">2</span>s
             </div>
 
-            <a href="#" class="btn-action" id="returnStoreBtn" style="background: #047857;">
-                <i class="fa-solid fa-arrow-right"></i> Return to Store Immediately
+            <a href="#" class="btn-minimal" id="returnStoreBtn">
+                Return to Store <i class="fa-solid fa-arrow-right" style="font-size: 11px;"></i>
             </a>
         </div>
 
         <!-- 3. ERROR / CANCELLED VIEW -->
-        <div class="gateway-body" id="errorView" style="display: none;">
-            <div class="error-circle">
+        <div class="checkout-body" id="errorView" style="display: none;">
+            <div class="status-avatar-error">
                 <i class="fa-solid fa-xmark"></i>
             </div>
-            <h2 class="view-title" style="color: var(--error);">Payment Unconfirmed</h2>
-            <p class="view-desc" id="errorDesc">The payment session could not be completed or was cancelled.</p>
+            <h1 class="page-headline">Payment Unconfirmed</h1>
+            <p class="page-subtext" id="errorDesc">The payment could not be confirmed or was cancelled.</p>
 
-            <div class="countdown-chip" style="color: var(--error);" id="errorCountdownChip">
-                <i class="fa-solid fa-spinner fa-spin"></i> Returning to store in <span id="errorCountdownSecs">3</span>s
+            <div class="countdown-indicator" style="color: var(--accent-red);" id="errorCountdownChip">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Returning in <span id="errorCountdownSecs">3</span>s
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button class="btn-action" onclick="location.reload()" style="background: #F1F5F9; color: var(--text-dark); border: 1px solid var(--border-color); box-shadow: none;">
+                <button class="btn-minimal btn-minimal-secondary" onclick="location.reload()">
                     <i class="fa-solid fa-rotate-right"></i> Retry Verification
                 </button>
-                <a href="#" class="btn-action" id="errorReturnBtn" style="background: var(--error);">
-                    <i class="fa-solid fa-arrow-left"></i> Return to Store
+                <a href="#" class="btn-minimal" id="errorReturnBtn">
+                    Return to Store
                 </a>
             </div>
         </div>
 
         <!-- Footer -->
-        <div class="footer-brand">
-            <i class="fa-solid fa-shield-halved"></i> Powered by Campus Events Ghana &amp; Paystack
+        <div class="checkout-footer">
+            <i class="fa-solid fa-lock" style="font-size: 10px;"></i> 256-Bit SSL Secured Checkout
         </div>
     </div>
 
@@ -386,7 +388,7 @@
             const isReturningFromPaystack = urlParams.has('reference') || urlParams.has('trxref');
 
             if (!sessionRef) {
-                showError('Invalid gateway checkout URL. Missing transaction session reference.', null);
+                showError('Invalid payment session reference.', null);
                 return;
             }
 
@@ -396,7 +398,7 @@
                 const data = await res.json();
 
                 if (!res.ok) {
-                    throw new Error(data.error || 'Failed to communicate with payment gateway.');
+                    throw new Error(data.error || 'Failed to communicate with payment processor.');
                 }
 
                 const tx = data.transaction || {};
@@ -411,21 +413,21 @@
 
                 // --- CASE 2: User returning from Paystack but payment is still PENDING / FAILED ---
                 if (isReturningFromPaystack && (data.status !== 'SUCCESS')) {
-                    showError('Your payment was not completed or could not be verified by the processor.', cancelUrl);
+                    showError('Your payment was not completed or was cancelled.', cancelUrl);
                     return;
                 }
 
-                // --- CASE 3: First time entering gateway -> Show clean redirect screen & forward to Paystack ---
+                // --- CASE 3: Initial Checkout Forwarding Screen ---
                 if (data.paystack_url) {
-                    document.getElementById('initMerchantBox').style.display = 'block';
-                    document.getElementById('initMerchantName').textContent = tx.merchant_name || 'Precision Axis AI';
-                    document.getElementById('initAmount').textContent = 'GHS ' + parseFloat(tx.amount_ghs || 0).toFixed(2);
-                    
-                    const manualBtn = document.getElementById('manualPayBtn');
-                    manualBtn.href = data.paystack_url;
-                    manualBtn.style.display = 'flex';
+                    document.getElementById('summaryMerchant').textContent = tx.merchant_name || 'Precision Axis AI';
+                    document.getElementById('summaryItem').textContent = tx.title || 'AI Prediction Access';
+                    document.getElementById('summaryAmount').textContent = 'GHS ' + parseFloat(tx.amount_ghs || 0).toFixed(2);
 
-                    // Automatic seamless redirect to Paystack after 500ms
+                    const manualBtn = document.getElementById('manualForwardBtn');
+                    manualBtn.href = data.paystack_url;
+                    manualBtn.style.display = 'inline-flex';
+
+                    // Seamless automatic forward to Paystack after 500ms
                     setTimeout(() => {
                         window.location.href = data.paystack_url;
                     }, 500);
@@ -439,6 +441,7 @@
         });
 
         function showSuccess(tx, returnUrl) {
+            document.getElementById('topHeaderTitle').textContent = 'Payment Completed';
             document.getElementById('connectingView').style.display = 'none';
             document.getElementById('errorView').style.display = 'none';
             document.getElementById('successView').style.display = 'block';
@@ -446,13 +449,12 @@
             document.getElementById('successMerchant').textContent = tx.merchant_name || 'Precision Axis AI';
             document.getElementById('successAmount').textContent = 'GHS ' + parseFloat(tx.amount_ghs || 0).toFixed(2);
             document.getElementById('successRef').textContent = tx.merchant_ref || tx.gateway_ref || '';
-            document.getElementById('successDesc').textContent = `Payment of GHS ${parseFloat(tx.amount_ghs || 0).toFixed(2)} confirmed. Returning to ${tx.merchant_name || 'store'}...`;
 
             if (returnUrl) {
                 document.getElementById('returnStoreBtn').href = returnUrl;
             }
 
-            // 2-Second Countdown Delay as requested by user
+            // 2-Second Delay Countdown
             let countdown = 2;
             const badge = document.getElementById('countdownSecs');
             const timer = setInterval(() => {
@@ -468,6 +470,7 @@
         }
 
         function showError(msg, cancelUrl) {
+            document.getElementById('topHeaderTitle').textContent = 'Checkout Status';
             document.getElementById('connectingView').style.display = 'none';
             document.getElementById('successView').style.display = 'none';
             document.getElementById('errorView').style.display = 'block';
@@ -479,7 +482,6 @@
                 const finalCancelUrl = `${cancelUrl}${joinChar}status=failed&error=${encodeURIComponent(msg)}`;
                 errorReturnBtn.href = finalCancelUrl;
 
-                // 3-second auto-redirect back on error
                 let countdown = 3;
                 const badge = document.getElementById('errorCountdownSecs');
                 const timer = setInterval(() => {
