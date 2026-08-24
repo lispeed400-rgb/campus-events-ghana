@@ -9,7 +9,13 @@ const CORS = {
 };
 
 const DB_CONN = 'postgresql://postgres.iujikypubqpcstetwdod:SuperSecurePass542!@aws-0-us-east-1.pooler.supabase.com:6543/postgres';
-const pool = new Pool({ connectionString: DB_CONN, ssl: { rejectUnauthorized: false } });
+const pool = new Pool({
+    connectionString: DB_CONN,
+    ssl: { rejectUnauthorized: false },
+    max: 2,
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 2000
+});
 
 function hashPassword(password) {
     const salt = crypto.randomBytes(16).toString('hex');
