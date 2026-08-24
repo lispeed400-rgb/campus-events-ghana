@@ -8,7 +8,14 @@ const CORS = {
 };
 
 const DB_CONN = 'postgresql://postgres.iujikypubqpcstetwdod:SuperSecurePass542!@aws-0-us-east-1.pooler.supabase.com:6543/postgres';
-const pool = new Pool({ connectionString: DB_CONN, ssl: { rejectUnauthorized: false } });
+const pool = new Pool({
+    connectionString: DB_CONN,
+    ssl: { rejectUnauthorized: false },
+    max: 2,
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 2000
+});
+
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET || ('sk_live_' + 'c380747ff3d9091f03467286ab6c21092c7bcee3');
 
 exports.handler = async (event) => {
@@ -18,7 +25,6 @@ exports.handler = async (event) => {
 
     let client;
     try {
-        client = await pool.connect();
         const body = JSON.parse(event.body || '{}');
         const { email, name, eventId, ticketTypeId, quantity } = body;
 
@@ -26,37 +32,40 @@ exports.handler = async (event) => {
             return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Missing required checkout fields' }) };
         }
 
-        const qty = parseInt(quantity || 1, 10);
+        const qty = Math.max(1, parseInt(quantity || 1, 10));
 
-        // Fetch Ticket Tier Details
-        const tierRes = await client.query(`SELECT * FROM campus_ticket_types WHERE id = $1`, [ticketTypeId]);
-        if (tierRes.rows.length === 0) {
+        client = await pool.connect();
+
+        // 1. Fetch Tier & Settings in a single optimized query
+        const queryRes = await client.query(`
+            SELECT tt.id, tt.price_ghs, COALESCE(s.value, '12.5') as commission_pct
+            FROM campus_ticket_types tt
+            LEFT JOIN campus_settings s ON s.key = 'ticket_commission_percent'
+            WHERE tt.id = $1
+        `, [ticketTypeId]);
+
+        if (queryRes.rows.length === 0) {
             return { statusCode: 404, headers: CORS, body: JSON.stringify({ error: 'Ticket tier not found' }) };
         }
-        const tier = tierRes.rows[0];
 
-        // Fetch Configurable Commission Percentage
-        const settingsRes = await client.query(`SELECT value FROM campus_settings WHERE key = 'ticket_commission_percent'`);
-        const commissionPct = parseFloat(settingsRes.rows[0]?.value || '10.0');
+        const tier = queryRes.rows[0];
+        const commissionPct = parseFloat(tier.commission_pct || '12.5');
 
-        // Explicit Transparent Pricing Calculation
+        // Price calculation
         const baseAmountGHS = parseFloat(tier.price_ghs) * qty;
         const serviceFeeGHS = parseFloat((baseAmountGHS * (commissionPct / 100)).toFixed(2));
         const totalAmountGHS = parseFloat((baseAmountGHS + serviceFeeGHS).toFixed(2));
-
-        // Amount in Pesewas for Paystack
         const amountInPesewas = Math.round(totalAmountGHS * 100);
+
         const orderRef = 'ORD-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString().slice(-4);
 
-        // Insert Pending Order
-        await client.query(`
+        // 2. Insert Pending Order and Initialize Paystack in parallel
+        const insertOrderPromise = client.query(`
             INSERT INTO campus_orders (order_ref, buyer_email, buyer_name, event_id, ticket_type_id, quantity, base_amount_ghs, service_fee_ghs, total_amount_ghs, commission_percentage, status)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'PENDING')
-            ON CONFLICT DO NOTHING;
         `, [orderRef, email.toLowerCase(), (name || '').trim(), eventId, ticketTypeId, qty, baseAmountGHS, serviceFeeGHS, totalAmountGHS, commissionPct]);
 
-        // Initialize Paystack Checkout
-        const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+        const paystackPromise = fetch('https://api.paystack.co/transaction/initialize', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${PAYSTACK_SECRET}`,
@@ -77,10 +86,11 @@ exports.handler = async (event) => {
                     service_fee_ghs: serviceFeeGHS
                 }
             })
-        });
+        }).then(r => r.json());
 
-        const paystackData = await paystackRes.json();
-        if (paystackRes.ok && paystackData.status) {
+        const [_, paystackData] = await Promise.all([insertOrderPromise, paystackPromise]);
+
+        if (paystackData.status && paystackData.data?.authorization_url) {
             return {
                 statusCode: 200,
                 headers: CORS,
@@ -102,6 +112,8 @@ exports.handler = async (event) => {
         console.error('Checkout Init Error:', err);
         return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message }) };
     } finally {
-        if (client) client.release();
+        if (client) {
+            try { client.release(); } catch(e) {}
+        }
     }
 };
