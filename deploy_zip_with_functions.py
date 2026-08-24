@@ -4,7 +4,7 @@ import urllib.request
 import json
 
 SITE_ID = 'e7c6bf04-d10d-4298-8d96-8151eb34d25e'
-NETLIFY_TOKEN = 'nfp_8uvwAwVPdaz1L1j2kUoc128VgCoDZc6910cd'
+NETLIFY_TOKEN = 'nfc_4A3gsEDeFtN97HMDTChFdDxJbfGZHt91bd21'
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ZIP_FILE = os.path.join(BASE_DIR, 'deploy_bundle.zip')
 
