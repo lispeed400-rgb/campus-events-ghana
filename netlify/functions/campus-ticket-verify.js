@@ -27,10 +27,13 @@ exports.handler = async (event) => {
             }
 
             const ticketsRes = await client.query(`
-                SELECT t.*, e.title as event_title, e.venue, e.university, e.start_time, e.poster_url, tt.tier_name, tt.price_ghs
+                SELECT t.*, e.title as event_title, e.venue, e.university, e.start_time, e.poster_url, e.category,
+                       tt.tier_name, tt.price_ghs,
+                       o.buyer_name as attendee_name, o.buyer_email as attendee_email
                 FROM campus_tickets t
                 JOIN campus_events e ON t.event_id = e.id
                 JOIN campus_ticket_types tt ON t.ticket_type_id = tt.id
+                JOIN campus_orders o ON t.order_id = o.id
                 WHERE LOWER(t.attendee_email) = $1
                 ORDER BY t.id DESC
             `, [email.toLowerCase().trim()]);

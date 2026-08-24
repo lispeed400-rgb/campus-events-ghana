@@ -20,7 +20,7 @@ exports.handler = async (event) => {
     try {
         client = await pool.connect();
         const body = JSON.parse(event.body || '{}');
-        const { email, eventId, ticketTypeId, quantity } = body;
+        const { email, name, eventId, ticketTypeId, quantity } = body;
 
         if (!email || !eventId || !ticketTypeId) {
             return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Missing required checkout fields' }) };
@@ -50,9 +50,10 @@ exports.handler = async (event) => {
 
         // Insert Pending Order
         await client.query(`
-            INSERT INTO campus_orders (order_ref, buyer_email, event_id, ticket_type_id, quantity, base_amount_ghs, service_fee_ghs, total_amount_ghs, commission_percentage, status)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'PENDING');
-        `, [orderRef, email.toLowerCase(), eventId, ticketTypeId, qty, baseAmountGHS, serviceFeeGHS, totalAmountGHS, commissionPct]);
+            INSERT INTO campus_orders (order_ref, buyer_email, buyer_name, event_id, ticket_type_id, quantity, base_amount_ghs, service_fee_ghs, total_amount_ghs, commission_percentage, status)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'PENDING')
+            ON CONFLICT DO NOTHING;
+        `, [orderRef, email.toLowerCase(), (name || '').trim(), eventId, ticketTypeId, qty, baseAmountGHS, serviceFeeGHS, totalAmountGHS, commissionPct]);
 
         // Initialize Paystack Checkout
         const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
@@ -66,7 +67,7 @@ exports.handler = async (event) => {
                 amount: amountInPesewas,
                 currency: 'GHS',
                 reference: orderRef,
-                callback_url: 'https://precisionaxis.online/campus_events/tickets.html?order_ref=' + orderRef,
+                callback_url: 'https://campuseventghana.site/tickets.html?order_ref=' + orderRef,
                 metadata: {
                     order_ref: orderRef,
                     event_id: eventId,

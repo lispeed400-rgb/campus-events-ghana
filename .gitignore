@@ -9,3 +9,6 @@ deploy_by_id.js
 fast_zip_deploy.js
 deploy_cli_prod.js
 patch_site_public.js
+
+# Local Netlify folder
+.netlify

@@ -29,7 +29,7 @@ exports.handler = async (event) => {
     let client;
     try {
         client = await pool.connect();
-        const reference = event.queryStringParameters?.reference || event.queryStringParameters?.order_ref;
+        const reference = event.queryStringParameters?.reference || event.queryStringParameters?.order_ref || event.queryStringParameters?.trxref;
         if (!reference) {
             return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Missing reference parameter' }) };
         }
@@ -45,10 +45,13 @@ exports.handler = async (event) => {
         // If order already paid, fetch existing tickets
         if (order.status === 'PAID') {
             const existingTickets = await client.query(`
-                SELECT t.*, e.title as event_title, e.venue, e.university, e.start_time, tt.tier_name, tt.price_ghs
+                SELECT t.*, e.title as event_title, e.venue, e.university, e.start_time, e.category,
+                       tt.tier_name, tt.price_ghs,
+                       o.buyer_name as attendee_name, o.buyer_email as attendee_email
                 FROM campus_tickets t
                 JOIN campus_events e ON t.event_id = e.id
                 JOIN campus_ticket_types tt ON t.ticket_type_id = tt.id
+                JOIN campus_orders o ON t.order_id = o.id
                 WHERE t.order_id = $1
             `, [order.id]);
 
@@ -109,10 +112,13 @@ exports.handler = async (event) => {
 
         // Fetch full ticket details with event metadata
         const fullTickets = await client.query(`
-            SELECT t.*, e.title as event_title, e.venue, e.university, e.start_time, tt.tier_name, tt.price_ghs
+            SELECT t.*, e.title as event_title, e.venue, e.university, e.start_time, e.category,
+                   tt.tier_name, tt.price_ghs,
+                   o.buyer_name as attendee_name, o.buyer_email as attendee_email
             FROM campus_tickets t
             JOIN campus_events e ON t.event_id = e.id
             JOIN campus_ticket_types tt ON t.ticket_type_id = tt.id
+            JOIN campus_orders o ON t.order_id = o.id
             WHERE t.order_id = $1
         `, [order.id]);
 

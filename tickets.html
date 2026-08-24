@@ -3,70 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My QR Tickets – Campus Events</title>
+    <title>My QR Tickets – Campus Events Ghana</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- QRCode JS Library for Rendering QR Code Images -->
+    <!-- QRCode JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* ── Ticket Print Styles ── */
+        @media print {
+            body { background: #fff; }
+            .app-header, .hero-section, #walletHeading, .no-print { display: none !important; }
+            .ticket-print-wrap { page-break-inside: avoid; }
+        }
+
+        /* ── Ticket Card ── */
+        .ticket-print-wrap {
+            max-width: 400px;
+            margin: 0 auto 32px auto;
+        }
+
+        .ticket-card-new {
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+            color: #121212;
+        }
+
+        /* Tear line */
+        .ticket-tear {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin: 0 -1px;
+        }
+        .ticket-tear::before,
+        .ticket-tear::after {
+            content: '';
+            flex: 1;
+            border-top: 2px dashed #e0e0e0;
+        }
+        .ticket-tear-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            flex-shrink: 0;
+            margin: 0 -12px;
+            z-index: 1;
+        }
+        .ticket-tear-circle.left  { margin-left: -12px; }
+        .ticket-tear-circle.right { margin-right: -12px; }
+
+        /* Top banner */
+        .ticket-banner {
+            padding: 20px 24px 18px;
+            position: relative;
+            color: #fff;
+        }
+        .ticket-banner-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+        .ticket-banner-logo-icon {
+            width: 28px; height: 28px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+        .ticket-banner-logo-text {
+            font-size: 13px; font-weight: 800; letter-spacing: 0.3px;
+        }
+        .ticket-banner-logo-text span { opacity: 0.7; }
+        .ticket-category-pill {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        .ticket-event-title {
+            font-size: 22px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .ticket-event-org {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Body section */
+        .ticket-body {
+            padding: 20px 24px;
+            background: #fff;
+        }
+        .ticket-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .ticket-info-item label {
+            font-size: 9px;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #999;
+            letter-spacing: 0.8px;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .ticket-info-item span {
+            font-size: 13px;
+            font-weight: 700;
+            color: #121212;
+        }
+
+        /* Attendee strip */
+        .ticket-attendee-strip {
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .ticket-attendee-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6200EE, #03DAC6);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 16px; font-weight: 900;
+            flex-shrink: 0;
+        }
+        .ticket-attendee-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #121212;
+        }
+        .ticket-attendee-email {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* QR Section */
+        .ticket-qr-section {
+            text-align: center;
+            padding: 20px 0 16px;
+        }
+        .ticket-qr-wrapper {
+            background: #000;
+            padding: 16px;
+            border-radius: 16px;
+            display: inline-block;
+            margin-bottom: 14px;
+        }
+        .ticket-qr-wrapper canvas, .ticket-qr-wrapper img {
+            display: block;
+        }
+        .ticket-code-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .ticket-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 900;
+            color: #121212;
+            letter-spacing: 2px;
+        }
+
+        /* Status Footer */
+        .ticket-footer {
+            padding: 16px 24px;
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f0f0f0;
+        }
+        .ticket-status-valid {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #00E676;
+            color: #000;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 6px 14px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .ticket-status-used {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e0e0e0;
+            color: #666;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 6px 14px;
+            border-radius: 99px;
+            text-transform: uppercase;
+        }
+        .ticket-tier-badge {
+            font-size: 11px;
+            font-weight: 800;
+            color: #6200EE;
+            background: #f0e6ff;
+            padding: 5px 12px;
+            border-radius: 99px;
+        }
+
+        /* Print button */
+        .ticket-print-btn {
+            width: 100%;
+            margin-top: 12px;
+            padding: 11px;
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,0.15);
+            color: var(--text-medium);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .ticket-print-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="app-header">
+    <!-- Header with Auth & Advert buttons -->
+    <header class="app-header no-print">
         <a href="index.html" class="brand-logo">
             <div class="brand-icon"><i class="fa-solid fa-ticket"></i></div>
-            <div class="brand-name">Campus<span>Events</span></div>
+            <div class="brand-name">Campus<span>Events Ghana</span></div>
         </a>
-        <nav class="nav-links">
+        <nav class="nav-links" style="align-items: center;">
             <a href="index.html" class="nav-btn"><i class="fa-solid fa-compass"></i> Discover</a>
             <a href="tickets.html" class="nav-btn active"><i class="fa-solid fa-wallet"></i> My Tickets</a>
             <a href="vendor.html" class="nav-btn"><i class="fa-solid fa-bullhorn"></i> Organizer Portal</a>
-            <a href="admin.html" class="nav-btn"><i class="fa-solid fa-shield-halved"></i> Admin</a>
+            <div id="navAuthContainer" style="display: flex; align-items: center; gap: 8px; margin-left: 6px;"></div>
         </nav>
     </header>
 
     <!-- Main Container -->
     <div class="main-container">
         
-        <div class="hero-section" style="padding: 24px;">
-            <h1 class="hero-title">Where is my ticket?</h1>
-            <p class="hero-sub">Enter your email address to view your purchased QR tickets for door check-in.</p>
+        <div class="hero-section no-print" style="padding: 28px;">
+            <h1 class="hero-title">🎟️ My QR Tickets</h1>
+            <p class="hero-sub">Enter your email or log in to view your verified QR tickets. Present your QR code or ticket code at the event entrance for admission.</p>
             
-            <div style="display: flex; gap: 12px; max-width: 440px; margin-top: 16px;">
-                <input type="email" id="userEmailInput" placeholder="Enter student email..." class="form-control" style="flex-grow: 1; padding: 12px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; outline: none;">
-                <button onclick="loadUserTickets()" class="btn-primary" style="padding: 12px 20px;"><i class="fa-solid fa-magnifying-glass"></i> Load Tickets</button>
+            <div style="display: flex; gap: 12px; max-width: 480px; margin-top: 18px;">
+                <input type="email" id="userEmailInput" placeholder="Enter student email address..." class="form-control" style="flex-grow: 1; padding: 12px 16px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; outline: none; font-size: 14px;">
+                <button onclick="loadUserTickets()" class="btn-primary" style="padding: 12px 20px; white-space: nowrap;">
+                    <i class="fa-solid fa-magnifying-glass"></i> Load Tickets
+                </button>
             </div>
-            <div id="verifyStatusMsg" style="margin-top: 12px; font-family: var(--font-mono); font-size: 13px;"></div>
+            <div id="verifyStatusMsg" style="margin-top: 14px; font-family: var(--font-mono); font-size: 13px;"></div>
         </div>
 
-        <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 20px;" id="walletHeading">Purchased QR Tickets</h2>
+        <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 24px;" id="walletHeading" class="no-print"></h2>
 
         <!-- Ticket Cards Container -->
-        <div id="ticketsWalletContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+        <div id="ticketsWalletContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 32px;">
             <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-medium);">
-                Enter your email address above to retrieve your campus event tickets.
+                Enter your email address above or sign in to retrieve your campus event tickets.
             </div>
         </div>
 
     </div>
 
+    <!-- Load Shared Auth & Advert Script -->
+    <script src="auth-advert.js"></script>
+
     <script>
+    const CATEGORY_GRADIENTS = {
+        CONCERT: 'linear-gradient(135deg, #FF6B6B, #FF8E53)',
+        PARTY:   'linear-gradient(135deg, #A855F7, #6200EE)',
+        SEMINAR: 'linear-gradient(135deg, #00C9A7, #03DAC6)'
+    };
+    const CATEGORY_ICONS = { CONCERT: '🎵', PARTY: '🎉', SEMINAR: '💡' };
+
     document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const reference = urlParams.get('reference') || urlParams.get('order_ref') || urlParams.get('trxref');
         const statusMsg = document.getElementById('verifyStatusMsg');
 
         if (reference) {
-            statusMsg.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Verifying Paystack payment reference...</span>';
+            statusMsg.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Verifying payment &amp; generating your QR tickets...</span>';
             try {
                 const res = await fetch(`/.netlify/functions/campus-checkout-verify?reference=${reference}`);
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    statusMsg.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Payment Confirmed! Your QR tickets have been issued below.</span>';
+                    statusMsg.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Payment confirmed! Your QR tickets are ready below.</span>';
                     document.getElementById('userEmailInput').value = data.order.buyer_email;
+                    document.getElementById('walletHeading').textContent = `🎟️ ${data.tickets.length} Ticket${data.tickets.length > 1 ? 's' : ''} Issued`;
                     renderTickets(data.tickets);
                 } else {
                     throw new Error(data.error || 'Payment verification failed');
@@ -74,11 +333,30 @@
             } catch (e) {
                 statusMsg.innerHTML = `<span style="color: var(--error);">Error: ${e.message}</span>`;
             }
+        } else {
+            // Auto-load tickets if user is logged in
+            const user = getCurrentUser();
+            if (user && user.email) {
+                document.getElementById('userEmailInput').value = user.email;
+                loadUserTickets(user.email);
+            }
         }
     });
 
-    async function loadUserTickets() {
-        const email = document.getElementById('userEmailInput').value.trim();
+    function onAuthChange(user) {
+        if (user && user.email) {
+            document.getElementById('userEmailInput').value = user.email;
+            loadUserTickets(user.email);
+        } else {
+            document.getElementById('userEmailInput').value = '';
+            document.getElementById('ticketsWalletContainer').innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-medium);">Enter your email address above or sign in to retrieve your campus event tickets.</div>';
+            document.getElementById('walletHeading').textContent = '';
+            document.getElementById('verifyStatusMsg').innerHTML = '';
+        }
+    }
+
+    async function loadUserTickets(overrideEmail) {
+        const email = overrideEmail || document.getElementById('userEmailInput').value.trim();
         const statusMsg = document.getElementById('verifyStatusMsg');
         if (!email) return alert('Please enter your email address');
 
@@ -87,11 +365,17 @@
             const res = await fetch(`/.netlify/functions/campus-ticket-verify?email=${encodeURIComponent(email)}`);
             const data = await res.json();
             if (res.ok && data.success) {
-                statusMsg.innerHTML = '';
+                statusMsg.innerHTML = data.tickets.length
+                    ? `<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Found ${data.tickets.length} ticket${data.tickets.length > 1 ? 's' : ''}.</span>`
+                    : '';
+                document.getElementById('walletHeading').textContent = data.tickets.length
+                    ? `🎟️ ${data.tickets.length} Ticket${data.tickets.length > 1 ? 's' : ''} Found` : '';
                 renderTickets(data.tickets);
+            } else {
+                throw new Error(data.error || 'Failed to load tickets');
             }
         } catch (e) {
-            statusMsg.innerHTML = `<span style="color: var(--error);">Error loading tickets: ${e.message}</span>`;
+            statusMsg.innerHTML = `<span style="color: var(--error);">Error: ${e.message}</span>`;
         }
     }
 
@@ -104,52 +388,133 @@
 
         container.innerHTML = tickets.map((t, idx) => {
             const isUsed = t.status === 'USED';
-            const statusBadge = isUsed 
-                ? '<span class="pill-btn status-used"><i class="fa-solid fa-check-double"></i> CHECKED IN (USED)</span>' 
-                : '<span class="pill-btn status-valid"><i class="fa-solid fa-qrcode"></i> VALID ENTRY</span>';
-
-            const dateStr = new Date(t.start_time).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const dateObj = new Date(t.start_time);
+            const dateStr = dateObj.toLocaleDateString('en-GH', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            const timeStr = dateObj.toLocaleTimeString('en-GH', { hour: '2-digit', minute: '2-digit' });
+            const gradient = CATEGORY_GRADIENTS[t.category] || 'linear-gradient(135deg, #6200EE, #03DAC6)';
+            const icon = CATEGORY_ICONS[t.category] || '🎟️';
+            const initials = (t.attendee_name || t.attendee_email || '?').charAt(0).toUpperCase();
 
             return `
-                <div class="ticket-wallet-card">
-                    <div class="ticket-header">
-                        <span style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">${t.university} · ${t.tier_name}</span>
-                        <h3 style="font-size: 18px; font-weight: 900; margin: 4px 0;">${t.event_title}</h3>
-                        <span style="font-size: 12px; color: #666;"><i class="fa-solid fa-location-dot"></i> ${t.venue}</span><br>
-                        <span style="font-size: 12px; color: #666;"><i class="fa-regular fa-clock"></i> ${dateStr}</span>
+            <div class="ticket-print-wrap">
+                <div class="ticket-card-new" id="ticket-card-${idx}">
+
+                    <!-- Banner -->
+                    <div class="ticket-banner" style="background: ${gradient};">
+                        <div class="ticket-banner-logo">
+                            <div class="ticket-banner-logo-icon"><i class="fa-solid fa-ticket"></i></div>
+                            <div class="ticket-banner-logo-text">Campus<span>Events Ghana</span></div>
+                        </div>
+                        <div class="ticket-category-pill">${icon} ${t.category || 'EVENT'}</div>
+                        <div class="ticket-event-title">${t.event_title}</div>
+                        <div class="ticket-event-org">${t.university} · ${t.venue}</div>
                     </div>
 
-                    <div style="margin: 12px 0;">
-                        ${statusBadge}
+                    <!-- Tear line -->
+                    <div class="ticket-tear">
+                        <div class="ticket-tear-circle left"></div>
+                        <div class="ticket-tear-circle right"></div>
                     </div>
 
-                    <div class="ticket-qr-frame" id="qrcode-${idx}"></div>
+                    <!-- Body -->
+                    <div class="ticket-body">
+                        <div class="ticket-info-grid">
+                            <div class="ticket-info-item">
+                                <label>📅 Date</label>
+                                <span>${dateStr}</span>
+                            </div>
+                            <div class="ticket-info-item">
+                                <label>🕐 Time</label>
+                                <span>${timeStr}</span>
+                            </div>
+                            <div class="ticket-info-item">
+                                <label>📍 Venue</label>
+                                <span>${t.venue}</span>
+                            </div>
+                            <div class="ticket-info-item">
+                                <label>🎓 Campus</label>
+                                <span>${t.university}</span>
+                            </div>
+                        </div>
 
-                    <div>
-                        <span style="font-size: 10px; color: #888; text-transform: uppercase; display: block;">Check-in Code</span>
-                        <div class="ticket-code-badge">${t.ticket_code}</div>
+                        <!-- Attendee -->
+                        <div class="ticket-attendee-strip">
+                            <div class="ticket-attendee-avatar">${initials}</div>
+                            <div>
+                                <div class="ticket-attendee-name">${t.attendee_name || 'Ticket Holder'}</div>
+                                <div class="ticket-attendee-email">${t.attendee_email}</div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code -->
+                        <div class="ticket-qr-section">
+                            <div class="ticket-qr-wrapper">
+                                <div id="qrcode-${idx}"></div>
+                            </div>
+                            <div class="ticket-code-label">Scan QR or enter code at door</div>
+                            <div class="ticket-code">${t.ticket_code}</div>
+                        </div>
                     </div>
 
-                    <p style="font-size: 11px; color: #888; margin-top: 12px;">Present this QR code or 8-char code at the event door for scanning.</p>
+                    <!-- Footer -->
+                    <div class="ticket-footer">
+                        ${isUsed
+                            ? '<span class="ticket-status-used"><i class="fa-solid fa-check-double"></i> CHECKED IN</span>'
+                            : '<span class="ticket-status-valid"><i class="fa-solid fa-qrcode"></i> VALID ENTRY</span>'
+                        }
+                        <span class="ticket-tier-badge">🏷️ ${t.tier_name}</span>
+                    </div>
+
                 </div>
+
+                <!-- Print button (hidden on print) -->
+                <button class="ticket-print-btn no-print" onclick="printTicket(${idx})">
+                    <i class="fa-solid fa-print"></i> Print / Save This Ticket
+                </button>
+            </div>
             `;
         }).join('');
 
-        // Generate QR Code canvases
+        // Generate QR codes
         tickets.forEach((t, idx) => {
             const qrContainer = document.getElementById(`qrcode-${idx}`);
             if (qrContainer) {
                 qrContainer.innerHTML = '';
                 new QRCode(qrContainer, {
                     text: t.qr_hash || t.ticket_code,
-                    width: 140,
-                    height: 140,
-                    colorDark : "#FFFFFF",
-                    colorLight : "#000000",
-                    correctLevel : QRCode.CorrectLevel.H
+                    width: 160,
+                    height: 160,
+                    colorDark: '#000000',
+                    colorLight: '#FFFFFF',
+                    correctLevel: QRCode.CorrectLevel.H
                 });
             }
         });
+    }
+
+    function printTicket(idx) {
+        const card = document.getElementById(`ticket-card-${idx}`);
+        if (!card) return;
+        const printWin = window.open('', '_blank', 'width=500,height=700');
+        printWin.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Campus Events – Ticket</title>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=JetBrains+Mono:wght@700;900&display=swap" rel="stylesheet">
+                <style>
+                    body { margin: 0; padding: 24px; background: #f5f5f5; font-family: Inter, sans-serif; display: flex; justify-content: center; }
+                    * { box-sizing: border-box; }
+                </style>
+            </head>
+            <body>
+                ${card.outerHTML}
+                <script>window.onload = () => { window.print(); }<\/script>
+            </body>
+            </html>
+        `);
+        printWin.document.close();
     }
     </script>
 </body>

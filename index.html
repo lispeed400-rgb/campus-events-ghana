@@ -3,26 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Events Ghana – Student Marketplace</title>
+    <title>Campus Events Ghana – Student Marketplace &amp; Ticketing</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Paystack Inline JS -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <style>
+        .search-container {
+            position: relative;
+            margin: 20px 0 16px 0;
+            width: 100%;
+        }
+        .search-input {
+            width: 100%;
+            background: var(--surface-dark);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 16px 20px 16px 50px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .search-input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 20px rgba(3, 218, 198, 0.25);
+            background: var(--surface-elevated);
+        }
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-medium);
+            font-size: 18px;
+            pointer-events: none;
+        }
+        .search-clear {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .filter-header-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .results-count-badge {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--secondary);
+            font-weight: 700;
+            background: rgba(3, 218, 198, 0.1);
+            padding: 6px 14px;
+            border-radius: 99px;
+            border: 1px solid rgba(3, 218, 198, 0.25);
+        }
+        .month-filter-row {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- Header with Auth & Advert buttons -->
     <header class="app-header">
         <a href="index.html" class="brand-logo">
             <div class="brand-icon"><i class="fa-solid fa-ticket"></i></div>
-            <div class="brand-name">Campus<span>Events</span></div>
+            <div class="brand-name">Campus<span>Events Ghana</span></div>
         </a>
-        <nav class="nav-links">
+        <nav class="nav-links" style="align-items: center;">
             <a href="index.html" class="nav-btn active"><i class="fa-solid fa-compass"></i> Discover</a>
             <a href="tickets.html" class="nav-btn"><i class="fa-solid fa-wallet"></i> My Tickets</a>
             <a href="vendor.html" class="nav-btn"><i class="fa-solid fa-bullhorn"></i> Organizer Portal</a>
-            <a href="admin.html" class="nav-btn"><i class="fa-solid fa-shield-halved"></i> Admin</a>
+            <div id="navAuthContainer" style="display: flex; align-items: center; gap: 8px; margin-left: 6px;"></div>
         </nav>
     </header>
 
@@ -32,8 +109,15 @@
         <!-- Hero Header -->
         <section class="hero-section">
             <h1 class="hero-title">What is happening on campus?</h1>
-            <p class="hero-sub">Discover upcoming university events, concerts, hall raves, and tech summits across Ghana.</p>
+            <p class="hero-sub">Discover 100+ upcoming university concerts, mega hall raves, tech summits &amp; parties across Ghana (Oct – Dec 2026).</p>
             
+            <!-- Live Search Bar -->
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="eventSearchInput" class="search-input" placeholder="Search by event title, artist, university, venue, or keyword..." autocomplete="off">
+                <button id="searchClearBtn" class="search-clear" onclick="clearSearch()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
             <!-- University Filter Pills -->
             <div class="filter-pills-row" id="universityPills">
                 <button class="pill-btn active" data-uni="ALL">All Campuses</button>
@@ -42,51 +126,89 @@
                 <button class="pill-btn" data-uni="UCC">UCC</button>
                 <button class="pill-btn" data-uni="UPSA">UPSA</button>
                 <button class="pill-btn" data-uni="Ashesi">Ashesi</button>
+                <button class="pill-btn" data-uni="GIMPA">GIMPA</button>
+                <button class="pill-btn" data-uni="Academic City">Academic City</button>
+                <button class="pill-btn" data-uni="Central University">Central University</button>
+            </div>
+
+            <!-- Ticket Advert CTA Card -->
+            <div class="advert-cta-card">
+                <div>
+                    <div style="font-weight: 900; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-bullhorn" style="color: var(--gold);"></i> Organizing an event on campus?
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-medium); margin-top: 2px;">Promote and sell tickets to 50,000+ students across UG, KNUST, UCC, UPSA &amp; Ashesi.</p>
+                </div>
+                <button class="nav-advert-btn" onclick="openAdvertModal()" style="padding: 10px 18px; font-size: 13px;">
+                    <i class="fa-solid fa-rocket"></i> Request Ticket Advert
+                </button>
             </div>
         </section>
 
-        <!-- Category Filter Pills -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <span style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-medium); letter-spacing: 1px;">Filter Category</span>
-            <div class="filter-pills-row" id="categoryPills">
-                <button class="pill-btn active" data-cat="ALL">All Categories</button>
-                <button class="pill-btn" data-cat="CONCERT">Concerts</button>
-                <button class="pill-btn" data-cat="PARTY">Parties & Raves</button>
-                <button class="pill-btn" data-cat="SEMINAR">Seminars & Tech</button>
+        <!-- Category & Month Filters Bar -->
+        <div class="filter-header-bar">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-medium); letter-spacing: 1px; margin-right: 4px;">Category:</span>
+                <div class="filter-pills-row" id="categoryPills">
+                    <button class="pill-btn active" data-cat="ALL">All Categories</button>
+                    <button class="pill-btn" data-cat="CONCERT">🎵 Concerts</button>
+                    <button class="pill-btn" data-cat="PARTY">🎉 Parties &amp; Raves</button>
+                    <button class="pill-btn" data-cat="SEMINAR">💡 Seminars &amp; Tech</button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-medium); letter-spacing: 1px; margin-right: 4px;">Month:</span>
+                <div class="month-filter-row" id="monthPills">
+                    <button class="pill-btn active" data-month="ALL">All Months</button>
+                    <button class="pill-btn" data-month="10">October</button>
+                    <button class="pill-btn" data-month="11">November</button>
+                    <button class="pill-btn" data-month="12">December</button>
+                </div>
+                <div id="eventsCountBadge" class="results-count-badge">Loading...</div>
             </div>
         </div>
 
         <!-- Event Cards Grid -->
         <div class="events-grid" id="eventsGrid">
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-medium);">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-medium);">
                 <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                <p style="margin-top: 12px;">Loading campus events...</p>
+                <p style="margin-top: 14px; font-size: 15px;">Loading 100+ campus events...</p>
             </div>
         </div>
 
     </div>
 
-    <!-- Transparent Fee Checkout Modal -->
+    <!-- Checkout Modal -->
     <div id="checkoutModal" class="modal-overlay" style="display: none;">
         <div class="modal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="font-size: 18px; font-weight: 800;" id="modalEventTitle">Purchase Ticket</h3>
-                <button onclick="closeCheckoutModal()" style="background: none; border: none; color: var(--text-medium); font-size: 18px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h3 style="font-size: 19px; font-weight: 800;" id="modalEventTitle">Purchase Ticket</h3>
+                    <p style="font-size: 12px; color: var(--text-medium); margin-top: 2px;" id="modalEventDate"></p>
+                </div>
+                <button onclick="closeCheckoutModal()" style="background: none; border: none; color: var(--text-medium); font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div class="form-group" style="margin-bottom: 14px;">
-                <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase; font-weight: 700;">Select Ticket Tier</label>
-                <select id="modalTicketTierSelect" class="form-control" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px; outline: none;"></select>
+                <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase; font-weight: 700;">Full Name</label>
+                <input type="text" id="modalBuyerName" placeholder="e.g. Kwame Mensah" class="form-control" style="width: 100%; padding: 11px 14px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; margin-top: 4px; outline: none; font-size: 14px;">
             </div>
 
             <div class="form-group" style="margin-bottom: 14px;">
-                <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase; font-weight: 700;">Quantity</label>
-                <input type="number" id="modalTicketQty" value="1" min="1" max="5" class="form-control" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px; outline: none;">
+                <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase; font-weight: 700;">Student Email Address (for QR ticket)</label>
+                <input type="email" id="modalBuyerEmail" placeholder="student@st.ug.edu.gh" class="form-control" style="width: 100%; padding: 11px 14px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; margin-top: 4px; outline: none; font-size: 14px;" required>
             </div>
 
-            <div class="form-group" style="margin-bottom: 14px;">
-                <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase; font-weight: 700;">Student Email Address</label>
-                <input type="email" id="modalBuyerEmail" placeholder="student@st.ug.edu.gh" class="form-control" style="width: 100%; padding: 10px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-top: 4px; outline: none;" required>
+            <div style="display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 12px; margin-bottom: 14px;">
+                <div class="form-group">
+                    <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase; font-weight: 700;">Ticket Tier</label>
+                    <select id="modalTicketTierSelect" class="form-control" style="width: 100%; padding: 11px 12px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; margin-top: 4px; outline: none; font-size: 13px; font-weight: 600;"></select>
+                </div>
+                <div class="form-group">
+                    <label style="font-size: 11px; color: var(--text-medium); text-transform: uppercase; font-weight: 700;">Quantity</label>
+                    <input type="number" id="modalTicketQty" value="1" min="1" max="10" class="form-control" style="width: 100%; padding: 11px 12px; background: var(--surface-elevated); color: #fff; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; margin-top: 4px; outline: none; font-size: 14px; text-align: center;">
+                </div>
             </div>
 
             <!-- Transparent Price Breakdown Box -->
@@ -100,29 +222,46 @@
                     <strong id="modalServiceFeeGHS">GHS 0.00</strong>
                 </div>
                 <div class="price-line total">
-                    <span>Total Price:</span>
+                    <span>Total Amount:</span>
                     <strong id="modalTotalPriceGHS">GHS 0.00</strong>
                 </div>
             </div>
 
-            <button id="paystackPayBtn" class="btn-primary" style="width: 100%; padding: 14px; font-size: 15px; border-radius: 12px;">
-                <i class="fa-solid fa-lock"></i> Pay via Paystack Mobile Money
+            <button id="paystackPayBtn" class="btn-primary" style="width: 100%; padding: 14px; font-size: 15px; border-radius: 12px; margin-top: 4px;">
+                <i class="fa-solid fa-lock"></i> Pay via Paystack Mobile Money / Card
             </button>
-            <div id="checkoutStatus" style="margin-top: 12px; font-size: 12px; font-family: var(--font-mono); text-align: center;"></div>
+            <p style="font-size: 11px; color: var(--text-medium); text-align: center; margin-top: 10px;">
+                <i class="fa-solid fa-shield-halved" style="color: var(--secondary);"></i> Secured by Paystack · Instant QR Code issued upon payment
+            </p>
+            <div id="checkoutStatus" style="margin-top: 8px; font-size: 12px; font-family: var(--font-mono); text-align: center;"></div>
         </div>
     </div>
+
+    <!-- Load Shared Auth & Advert Script -->
+    <script src="auth-advert.js"></script>
 
     <script>
     let allEvents = [];
     let selectedUniversity = 'ALL';
     let selectedCategory = 'ALL';
+    let selectedMonth = 'ALL';
+    let searchQuery = '';
     let activeEvent = null;
     let platformCommissionPct = 10.0;
+    const PAYSTACK_PK = 'pk_live_32a7cb1bff3da90f4a7f7a0e54f80aad0b4cc4ed';
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchEvents();
         setupFilters();
+        setupSearch();
     });
+
+    function onAuthChange(user) {
+        if (user && activeEvent) {
+            document.getElementById('modalBuyerName').value = user.full_name || '';
+            document.getElementById('modalBuyerEmail').value = user.email || '';
+        }
+    }
 
     async function fetchEvents() {
         try {
@@ -134,8 +273,27 @@
                 renderEvents();
             }
         } catch (e) {
-            console.error('Failed to load events:', e);
+            document.getElementById('eventsGrid').innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-medium);">Could not load events. Please refresh.</div>';
         }
+    }
+
+    function setupSearch() {
+        const searchInput = document.getElementById('eventSearchInput');
+        const clearBtn = document.getElementById('searchClearBtn');
+
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim().toLowerCase();
+            clearBtn.style.display = searchQuery ? 'flex' : 'none';
+            renderEvents();
+        });
+    }
+
+    function clearSearch() {
+        const searchInput = document.getElementById('eventSearchInput');
+        searchInput.value = '';
+        searchQuery = '';
+        document.getElementById('searchClearBtn').style.display = 'none';
+        renderEvents();
     }
 
     function setupFilters() {
@@ -156,34 +314,75 @@
                 renderEvents();
             });
         });
+
+        document.querySelectorAll('#monthPills .pill-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#monthPills .pill-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedMonth = btn.getAttribute('data-month');
+                renderEvents();
+            });
+        });
     }
+
+    const CATEGORY_ICONS = { CONCERT: '🎵', PARTY: '🎉', SEMINAR: '💡' };
+    const CATEGORY_COLORS = { CONCERT: '#FF6B6B', PARTY: '#A855F7', SEMINAR: '#03DAC6' };
 
     function renderEvents() {
         const grid = document.getElementById('eventsGrid');
+        const badge = document.getElementById('eventsCountBadge');
+
         const filtered = allEvents.filter(e => {
             const matchUni = selectedUniversity === 'ALL' || e.university === selectedUniversity;
             const matchCat = selectedCategory === 'ALL' || e.category === selectedCategory;
-            return matchUni && matchCat;
+            
+            // Month match (10 for Oct, 11 for Nov, 12 for Dec)
+            let matchMonth = true;
+            if (selectedMonth !== 'ALL') {
+                const evMonth = (new Date(e.start_time).getUTCMonth() + 1).toString();
+                matchMonth = evMonth === selectedMonth;
+            }
+
+            // Search match (title, venue, university, organization, description)
+            let matchSearch = true;
+            if (searchQuery) {
+                const haystack = `${e.title} ${e.venue} ${e.university} ${e.organization_name} ${e.description || ''} ${e.category}`.toLowerCase();
+                matchSearch = haystack.includes(searchQuery);
+            }
+
+            return matchUni && matchCat && matchMonth && matchSearch;
         });
 
+        badge.textContent = `${filtered.length} Event${filtered.length === 1 ? '' : 's'}`;
+
         if (!filtered.length) {
-            grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-medium);">No campus events found for this filter.</div>';
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-medium);">
+                    <i class="fa-solid fa-filter-circle-xmark fa-3x" style="color: rgba(255,255,255,0.2); margin-bottom: 16px;"></i>
+                    <h3 style="color: #fff; margin-bottom: 8px;">No events found</h3>
+                    <p style="font-size: 14px;">Try searching for a different keyword or campus.</p>
+                </div>
+            `;
             return;
         }
 
         grid.innerHTML = filtered.map(e => {
             const tiers = e.ticket_types || [];
             const prices = tiers.map(t => parseFloat(t.price_ghs));
-            const minPrice = prices.length ? Math.min(...prices) : 0;
-            const maxPrice = prices.length ? Math.max(...prices) : 0;
-            const priceStr = minPrice === maxPrice ? `GHS ${minPrice.toFixed(2)}` : `GHS ${minPrice.toFixed(0)} - GHS ${maxPrice.toFixed(0)}`;
-            const dateStr = new Date(e.start_time).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const minPrice = prices.length ? Math.min(...prices) : 50;
+            const maxPrice = prices.length ? Math.max(...prices) : 1100;
+            const priceStr = minPrice === maxPrice ? `GHS ${minPrice.toFixed(0)}` : `GHS ${minPrice.toFixed(0)} – GHS ${maxPrice.toFixed(0)}`;
+            const dateObj = new Date(e.start_time);
+            const dateStr = dateObj.toLocaleDateString('en-GH', { weekday: 'short', month: 'short', day: 'numeric' });
+            const timeStr = dateObj.toLocaleTimeString('en-GH', { hour: '2-digit', minute: '2-digit' });
+            const icon = CATEGORY_ICONS[e.category] || '📅';
+            const color = CATEGORY_COLORS[e.category] || '#6200EE';
 
             return `
                 <div class="event-card">
                     <div class="card-poster-wrap">
-                        <img src="${e.poster_url}" class="card-poster-img" alt="${e.title}">
-                        <span class="card-tag">${e.category}</span>
+                        <img src="${e.poster_url}" class="card-poster-img" alt="${e.title}" onerror="this.src='https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800'">
+                        <span class="card-tag" style="background: ${color}22; color: ${color}; border: 1px solid ${color}44;">${icon} ${e.category}</span>
                         <span class="card-verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</span>
                     </div>
                     <div class="card-body">
@@ -191,8 +390,8 @@
                             <span class="card-uni">${e.university} · ${e.venue}</span>
                             <h3 class="card-event-title">${e.title}</h3>
                             <div class="card-meta">
-                                <span><i class="fa-regular fa-calendar-days"></i> ${dateStr}</span>
-                                <span><i class="fa-solid fa-building-columns"></i> Organized by ${e.organization_name}</span>
+                                <span><i class="fa-regular fa-calendar-days"></i> ${dateStr} · ${timeStr}</span>
+                                <span><i class="fa-solid fa-building-columns"></i> ${e.organization_name}</span>
                             </div>
                         </div>
                         <div class="card-price-row">
@@ -200,7 +399,9 @@
                                 <span style="font-size: 10px; color: var(--text-medium); display: block; text-transform: uppercase;">Tickets From</span>
                                 <span class="card-price">${priceStr}</span>
                             </div>
-                            <button class="btn-primary" onclick="openCheckoutModal(${e.id})">Get Ticket</button>
+                            <button class="btn-primary" onclick="openCheckoutModal(${e.id})">
+                                <i class="fa-solid fa-ticket"></i> Get Ticket
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -213,23 +414,35 @@
         if (!activeEvent) return;
 
         document.getElementById('modalEventTitle').textContent = activeEvent.title;
+        const dateObj = new Date(activeEvent.start_time);
+        document.getElementById('modalEventDate').textContent =
+            dateObj.toLocaleDateString('en-GH', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) +
+            ' · ' + dateObj.toLocaleTimeString('en-GH', { hour: '2-digit', minute: '2-digit' }) +
+            ' @ ' + activeEvent.venue + ' (' + activeEvent.university + ')';
+
+        // Pre-fill user data if logged in
+        const user = getCurrentUser();
+        if (user) {
+            document.getElementById('modalBuyerName').value = user.full_name || '';
+            document.getElementById('modalBuyerEmail').value = user.email || '';
+        }
+
         const tierSelect = document.getElementById('modalTicketTierSelect');
         const tiers = activeEvent.ticket_types || [];
-        
-        tierSelect.innerHTML = tiers.map(t => `<option value="${t.id}" data-price="${t.price_ghs}">${t.tier_name} – GHS ${parseFloat(t.price_ghs).toFixed(2)}</option>`).join('');
+        tierSelect.innerHTML = tiers.map(t => `<option value="${t.id}" data-price="${t.price_ghs}">${t.tier_name} – GHS ${parseFloat(t.price_ghs).toFixed(0)}</option>`).join('');
 
         updateBreakdown();
-
         tierSelect.onchange = updateBreakdown;
         document.getElementById('modalTicketQty').oninput = updateBreakdown;
 
+        document.getElementById('checkoutStatus').innerHTML = '';
         document.getElementById('checkoutModal').style.display = 'flex';
     }
 
     function updateBreakdown() {
         const tierSelect = document.getElementById('modalTicketTierSelect');
         const selectedOpt = tierSelect.options[tierSelect.selectedIndex];
-        const unitPrice = parseFloat(selectedOpt.getAttribute('data-price') || 0);
+        const unitPrice = parseFloat(selectedOpt?.getAttribute('data-price') || 50);
         const qty = parseInt(document.getElementById('modalTicketQty').value || 1, 10);
 
         const base = unitPrice * qty;
@@ -246,33 +459,40 @@
         document.getElementById('checkoutModal').style.display = 'none';
     }
 
-    // Paystack Checkout Click
+    // Paystack Inline Checkout
     document.getElementById('paystackPayBtn').addEventListener('click', async () => {
+        const name = document.getElementById('modalBuyerName').value.trim();
         const email = document.getElementById('modalBuyerEmail').value.trim();
         const tierId = document.getElementById('modalTicketTierSelect').value;
         const qty = parseInt(document.getElementById('modalTicketQty').value || 1, 10);
         const statusDiv = document.getElementById('checkoutStatus');
 
+        if (!name) return alert('Please enter your full name for the ticket.');
         if (!email) return alert('Please enter your email address to receive your QR ticket.');
 
-        statusDiv.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Initializing Paystack checkout...</span>';
+        statusDiv.innerHTML = '<span style="color: var(--secondary);"><i class="fa-solid fa-spinner fa-spin"></i> Initializing Paystack payment...</span>';
+        document.getElementById('paystackPayBtn').disabled = true;
 
         try {
             const res = await fetch('/.netlify/functions/campus-checkout-init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, eventId: activeEvent.id, ticketTypeId: tierId, quantity: qty })
+                body: JSON.stringify({ email, name, eventId: activeEvent.id, ticketTypeId: tierId, quantity: qty })
             });
             const data = await res.json();
 
-            if (res.ok && data.success) {
-                statusDiv.innerHTML = '<span style="color: var(--success);">Redirecting to Paystack...</span>';
-                window.location.href = data.authorization_url;
-            } else {
-                throw new Error(data.error || 'Checkout initialization failed');
+            if (!res.ok || !data.success || !data.authorization_url) {
+                throw new Error(data.error || 'Failed to initialize Paystack checkout.');
             }
+
+            statusDiv.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-spinner fa-spin"></i> Opening Paystack payment portal...</span>';
+            
+            // Redirect to official Paystack checkout page
+            window.location.href = data.authorization_url;
+
         } catch (err) {
-            statusDiv.innerHTML = `<span style="color: var(--error);">Error: ${err.message}</span>`;
+            document.getElementById('paystackPayBtn').disabled = false;
+            statusDiv.innerHTML = `<span style="color: var(--error);"><i class="fa-solid fa-triangle-exclamation"></i> Error: ${err.message}</span>`;
         }
     });
     </script>

@@ -20,11 +20,11 @@
             <div class="brand-icon"><i class="fa-solid fa-ticket"></i></div>
             <div class="brand-name">Campus<span>Events</span></div>
         </a>
-        <nav class="nav-links">
+        <nav class="nav-links" style="align-items: center;">
             <a href="index.html" class="nav-btn"><i class="fa-solid fa-compass"></i> Discover</a>
             <a href="tickets.html" class="nav-btn"><i class="fa-solid fa-wallet"></i> My Tickets</a>
             <a href="vendor.html" class="nav-btn active"><i class="fa-solid fa-bullhorn"></i> Organizer Portal</a>
-            <a href="admin.html" class="nav-btn"><i class="fa-solid fa-shield-halved"></i> Admin</a>
+            <div id="navAuthContainer" style="display: flex; align-items: center; gap: 8px; margin-left: 6px;"></div>
         </nav>
     </header>
 
@@ -339,6 +339,7 @@
             view.innerHTML = `<div style="padding: 20px; color: var(--error);">Camera Access Error: ${err}</div>`;
         });
     }
-    </script>
+    <!-- Load Shared Auth & Advert Script -->
+    <script src="auth-advert.js"></script>
 </body>
 </html>
