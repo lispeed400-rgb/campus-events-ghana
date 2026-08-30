@@ -99,7 +99,6 @@
             <a href="index.html" class="nav-btn active"><i class="fa-solid fa-compass"></i> Discover</a>
             <a href="tickets.html" class="nav-btn"><i class="fa-solid fa-wallet"></i> My Tickets</a>
             <a href="vendor.html" class="nav-btn"><i class="fa-solid fa-bullhorn"></i> Organizer Portal</a>
-            <a href="developers.html" class="nav-btn"><i class="fa-solid fa-code"></i> Gateway API</a>
             <div id="navAuthContainer" style="display: flex; align-items: center; gap: 8px; margin-left: 6px;"></div>
         </nav>
     </header>
@@ -497,5 +496,24 @@
         }
     });
     </script>
+    <!-- Mobile App Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="bottom-nav-item active">
+            <i class="fa-solid fa-compass"></i>
+            <span>Discover</span>
+        </a>
+        <a href="tickets.html" class="bottom-nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>My Tickets</span>
+        </a>
+        <a href="vendor.html" class="bottom-nav-item">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>Organizer</span>
+        </a>
+        <button class="bottom-nav-item" onclick="openAdvertModal()">
+            <i class="fa-solid fa-rocket"></i>
+            <span>Promote</span>
+        </button>
+    </nav>
 </body>
 </html>

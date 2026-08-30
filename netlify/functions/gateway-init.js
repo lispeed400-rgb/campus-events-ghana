@@ -71,7 +71,9 @@ exports.handler = async (event) => {
         const merchantRef = (merchant_ref || ('ORD-' + Date.now())).trim();
 
         // 1. Initialize Paystack Checkout
-        const gatewayReturnUrl = `https://campuseventghana.site/gateway.html?session=${gatewayRef}`;
+        const host = event.headers?.host || 'campuseventghana-gateway.netlify.app';
+        const proto = event.headers?.['x-forwarded-proto'] || 'https';
+        const gatewayReturnUrl = `${proto}://${host}/gateway.html?session=${gatewayRef}`;
 
         const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
             method: 'POST',
